@@ -1,20 +1,11 @@
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Send, PenLine, Upload } from "lucide-react";
+import { Send, PenLine } from "lucide-react";
 import { WritingOutput } from "@/components/WritingOutput";
-import { AppSidebar } from "@/components/AppSidebar";
+import { AppSidebar, WritingSample } from "@/components/AppSidebar";
 import { streamGhostWrite } from "@/lib/stream-chat";
 import { toast } from "sonner";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 
 type Mode = "email" | "essay" | "polish";
 
@@ -31,19 +22,36 @@ const modeLabels: Record<Mode, string> = {
 };
 
 export default function Index() {
-  const [samples, setSamples] = useState("");
+  const [samples, setSamples] = useState<WritingSample[]>([]);
   const [mode, setMode] = useState<Mode>("email");
   const [prompt, setPrompt] = useState("");
   const [output, setOutput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
-  const [samplesOpen, setSamplesOpen] = useState(false);
 
-  const wordCount = samples.split(/\s+/).filter(Boolean).length;
+  const totalWordCount = samples.reduce((sum, s) => sum + s.wordCount, 0);
+  const allSamplesText = samples.map((s) => s.text).join("\n\n---\n\n");
+
+  const handleAddSample = (text: string) => {
+    const wc = text.split(/\s+/).filter(Boolean).length;
+    setSamples((prev) => [
+      {
+        id: crypto.randomUUID(),
+        text,
+        addedAt: new Date(),
+        wordCount: wc,
+      },
+      ...prev,
+    ]);
+    toast.success(`Added sample (${wc} words)`);
+  };
+
+  const handleRemoveSample = (id: string) => {
+    setSamples((prev) => prev.filter((s) => s.id !== id));
+  };
 
   const handleGenerate = useCallback(async () => {
-    if (!samples.trim()) {
-      setSamplesOpen(true);
-      toast.error("Add some writing samples first so I can learn your style.");
+    if (samples.length === 0) {
+      toast.error("Add some writing samples in the sidebar first so I can learn your style.");
       return;
     }
     if (!prompt.trim()) {
@@ -56,7 +64,7 @@ export default function Index() {
 
     let accumulated = "";
     await streamGhostWrite({
-      writingSamples: samples,
+      writingSamples: allSamplesText,
       mode,
       prompt,
       onDelta: (chunk) => {
@@ -69,7 +77,7 @@ export default function Index() {
         toast.error(err);
       },
     });
-  }, [samples, mode, prompt]);
+  }, [samples, allSamplesText, mode, prompt]);
 
   const handleNewSession = () => {
     setPrompt("");
@@ -83,7 +91,10 @@ export default function Index() {
           mode={mode}
           onModeChange={setMode}
           onNewSession={handleNewSession}
-          wordCount={wordCount}
+          samples={samples}
+          onAddSample={handleAddSample}
+          onRemoveSample={handleRemoveSample}
+          totalWordCount={totalWordCount}
         />
 
         <div className="flex-1 flex flex-col min-w-0">
@@ -91,13 +102,6 @@ export default function Index() {
           <header className="h-12 flex items-center gap-3 border-b border-border bg-card/50 backdrop-blur-sm px-4">
             <SidebarTrigger />
             <span className="text-sm font-medium text-foreground">{modeLabels[mode]}</span>
-            <button
-              onClick={() => setSamplesOpen(true)}
-              className="ml-auto flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-            >
-              <Upload className="h-3.5 w-3.5" />
-              {wordCount > 0 ? `${wordCount} words` : "Add samples"}
-            </button>
           </header>
 
           {/* Main chat area */}
@@ -118,9 +122,9 @@ export default function Index() {
                       What would you like me to write?
                     </h2>
                     <p className="text-sm text-muted-foreground">
-                      {wordCount > 0
-                        ? `I've got ${wordCount} words of your writing to study. Tell me what to write and I'll match your style.`
-                        : "Start by adding your writing samples, then tell me what to write."}
+                      {totalWordCount > 0
+                        ? `I've got ${totalWordCount} words across ${samples.length} sample${samples.length !== 1 ? "s" : ""}. Tell me what to write and I'll match your style.`
+                        : "Start by adding writing samples in the sidebar, then tell me what to write."}
                     </p>
                   </motion.div>
                 </div>
@@ -164,32 +168,6 @@ export default function Index() {
           </main>
         </div>
       </div>
-
-      {/* Writing Samples Dialog */}
-      <Dialog open={samplesOpen} onOpenChange={setSamplesOpen}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="font-serif">Your Writing Samples</DialogTitle>
-            <DialogDescription>
-              Paste emails, messages, or anything you've written. The more, the better I'll match your style.
-            </DialogDescription>
-          </DialogHeader>
-          <textarea
-            value={samples}
-            onChange={(e) => setSamples(e.target.value)}
-            placeholder="Paste your writing here… emails, texts, notes, essays — anything that sounds like you."
-            className="h-56 w-full resize-none rounded-xl border border-border bg-background p-4 font-sans text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-          />
-          {wordCount > 0 && (
-            <p className="text-xs text-muted-foreground">{wordCount} words provided</p>
-          )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setSamplesOpen(false)}>
-              Done
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </SidebarProvider>
   );
 }
