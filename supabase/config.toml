@@ -1,0 +1,4 @@
+project_id = "ugywmcutuvsggvakjyqn"
+
+[functions.ghost-write]
+verify_jwt = false
