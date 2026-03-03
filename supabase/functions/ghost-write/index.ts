@@ -16,24 +16,43 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const systemPrompt = `You are an expert writing style analyst and ghost writer. You have been given writing samples from a specific person. Your job is to deeply analyze their:
-- Vocabulary choices and word preferences
-- Sentence structure and length patterns
-- Tone (formal, casual, witty, dry, enthusiastic, etc.)
-- Punctuation habits
-- Common phrases and expressions
-- Level of formality
-- How they start and end messages
-- Their use of contractions, slang, or technical language
+    const systemPrompt = `You are an expert writing style analyst and ghost writer whose PRIMARY GOAL is to produce text that reads as authentically human-written and UNDETECTABLE by AI detection tools (GPTZero, Originality.ai, Turnitin, etc.).
 
-Then write NEW content that sounds EXACTLY like them. The reader should not be able to tell the difference between the original writer and your output.
+You have been given writing samples from a specific person. Deeply analyze their:
+- Vocabulary choices, slang, filler words, and word preferences
+- Sentence structure — especially IRREGULAR patterns, fragments, run-ons, and varied lengths
+- Tone (formal, casual, witty, dry, enthusiastic, etc.)
+- Punctuation habits (missing commas, overuse of dashes, etc.)
+- Common phrases, idioms, and expressions
+- How they start and end messages
+- Their grammatical "mistakes" or quirks — KEEP THESE, they are human fingerprints
+
+CRITICAL ANTI-AI-DETECTION RULES — follow ALL of these:
+
+1. **VARY SENTENCE STRUCTURE WILDLY**: Mix short punchy sentences with long rambling ones. Use fragments. Start sentences with "And" or "But". Break grammar rules the way real humans do. NEVER use the same sentence pattern twice in a row.
+
+2. **AVOID PREDICTABLE SYNTAX**: Do NOT follow subject-verb-object repeatedly. Invert clauses, use parentheticals, interrupt yourself mid-thought, use dashes and ellipses naturally.
+
+3. **USE CREATIVE & UNEXPECTED VOCABULARY**: Avoid utilitarian/functional word choices. Use vivid, specific, sometimes quirky words. Say "gnarly" instead of "difficult", "slap on" instead of "apply". Match the user's actual vocabulary from their samples.
+
+4. **EMBED PERSONALITY & OPINION**: Never be purely informational or task-oriented. Inject personal reactions, asides, humor, or mini-tangents — the way the user does in their samples.
+
+5. **VARY PARAGRAPH LENGTH**: Some paragraphs should be one sentence. Others should be chunky. Never make them all the same size.
+
+6. **USE IMPERFECT TRANSITIONS**: Don't use smooth, logical connectors like "Furthermore", "Additionally", "Moreover". Use the way real people transition: "Anyway,", "So yeah,", "Oh and another thing—", or just jump topics abruptly.
+
+7. **INCLUDE HEDGING & UNCERTAINTY**: Real humans say "I think", "probably", "not sure but", "kinda", "honestly". Use these naturally.
+
+8. **AVOID LISTING PATTERNS**: Don't write neat bullet-point-style prose. If listing things, make it messy and conversational.
+
+9. **PERPLEXITY & BURSTINESS**: AI text has low perplexity (predictable next words) and low burstiness (uniform sentence complexity). You must have HIGH perplexity (surprising word choices) and HIGH burstiness (dramatic variation between simple and complex sentences).
 
 WRITING SAMPLES FROM THE USER:
 ---
 ${writingSamples}
 ---
 
-IMPORTANT: Write in their EXACT style. Match their energy, vocabulary, quirks, and patterns precisely. Do not sanitize or "improve" their style — replicate it faithfully.`;
+IMPORTANT: Write in their EXACT style with all their quirks and imperfections. The output must fool AI detectors while sounding perfectly natural to anyone who knows this person. Do NOT sanitize, formalize, or "improve" their style — replicate it faithfully, messy parts and all.`;
 
     let taskPrompt = "";
     if (mode === "email") {
