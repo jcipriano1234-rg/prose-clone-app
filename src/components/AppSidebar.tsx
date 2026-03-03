@@ -1,4 +1,4 @@
-import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2, Shield, TrendingUp } from "lucide-react";
+import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -40,52 +40,6 @@ const modes = [
   { id: "polish" as Mode, icon: Sparkles, title: "Polish Text", description: "Rewrite anything as you" },
 ];
 
-// IKEA Effect — progress steps make users feel invested
-function StyleStrengthMeter({ wordCount, sampleCount }: { wordCount: number; sampleCount: number }) {
-  const strength = wordCount === 0 ? 0 : wordCount < 100 ? 1 : wordCount < 300 ? 2 : wordCount < 600 ? 3 : 4;
-  const labels = ["No data", "Weak", "Learning", "Strong", "Expert"];
-  const colors = [
-    "bg-muted",
-    "bg-destructive",
-    "bg-yellow-500",
-    "bg-primary",
-    "bg-green-500",
-  ];
-
-  return (
-    <div className="rounded-xl border border-border bg-card p-3 space-y-2">
-      <div className="flex items-center justify-between">
-        <span className="text-[11px] font-medium text-foreground flex items-center gap-1.5">
-          <TrendingUp className="h-3.5 w-3.5 text-primary" />
-          Style Strength
-        </span>
-        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-          strength >= 3 ? "bg-primary/10 text-primary" : strength >= 2 ? "bg-yellow-500/10 text-yellow-600" : "bg-muted text-muted-foreground"
-        }`}>
-          {labels[strength]}
-        </span>
-      </div>
-      <div className="flex gap-1">
-        {[0, 1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${
-              i < strength ? colors[strength] : "bg-muted"
-            }`}
-          />
-        ))}
-      </div>
-      <p className="text-[10px] text-muted-foreground">
-        {strength === 0 && "Add writing samples to get started"}
-        {strength === 1 && "Add more samples for better results"}
-        {strength === 2 && "Getting there — a few more samples helps"}
-        {strength === 3 && "Great coverage of your writing style"}
-        {strength === 4 && "Maximum accuracy — your voice is locked in"}
-      </p>
-    </div>
-  );
-}
-
 export function AppSidebar({ mode, onModeChange, onNewSession, samples, onAddSample, onRemoveSample, totalWordCount }: AppSidebarProps) {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
@@ -103,16 +57,13 @@ export function AppSidebar({ mode, onModeChange, onNewSession, samples, onAddSam
     <Sidebar collapsible="icon">
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-3">
-          <div
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-primary-foreground shadow-soft"
-            style={{ background: "var(--gradient-brand)" }}
-          >
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <PenLine className="h-5 w-5" />
           </div>
           {!collapsed && (
             <div className="overflow-hidden">
-              <h1 className="font-serif text-lg font-bold text-foreground truncate">GhostInk</h1>
-              <p className="text-[11px] text-muted-foreground truncate">Undetectable AI writing</p>
+              <h1 className="font-serif text-lg font-semibold text-foreground truncate">GhostInk</h1>
+              <p className="text-[11px] text-muted-foreground truncate">AI that writes like you</p>
             </div>
           )}
         </div>
@@ -126,7 +77,7 @@ export function AppSidebar({ mode, onModeChange, onNewSession, samples, onAddSam
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={onNewSession}
-                  className="gap-3 rounded-xl border border-dashed border-border bg-card hover:bg-accent transition-colors"
+                  className="gap-3 rounded-lg border border-dashed border-border bg-card hover:bg-accent transition-colors"
                 >
                   <Plus className="h-4 w-4 text-primary" />
                   {!collapsed && <span className="text-sm font-medium">New Session</span>}
@@ -165,15 +116,6 @@ export function AppSidebar({ mode, onModeChange, onNewSession, samples, onAddSam
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* IKEA Effect — Style Strength Meter */}
-        {!collapsed && (
-          <SidebarGroup>
-            <SidebarGroupContent className="px-2">
-              <StyleStrengthMeter wordCount={totalWordCount} sampleCount={samples.length} />
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
-
         {/* Writing Samples */}
         {!collapsed && (
           <SidebarGroup>
@@ -205,8 +147,7 @@ export function AppSidebar({ mode, onModeChange, onNewSession, samples, onAddSam
                     <button
                       onClick={handleSubmitSample}
                       disabled={!newSampleText.trim()}
-                      className="w-full rounded-lg text-primary-foreground text-xs font-medium py-1.5 hover:opacity-90 disabled:opacity-40 transition-all"
-                      style={{ background: "var(--gradient-brand)" }}
+                      className="w-full rounded-lg bg-primary text-primary-foreground text-xs font-medium py-1.5 hover:opacity-90 disabled:opacity-40 transition-all"
                     >
                       Add Sample
                     </button>
@@ -255,24 +196,15 @@ export function AppSidebar({ mode, onModeChange, onNewSession, samples, onAddSam
         )}
       </SidebarContent>
 
-      {/* Footer — Mere Exposure (consistent trust branding) */}
       <SidebarFooter className="p-4">
-        {!collapsed && (
-          <div className="space-y-2">
-            {totalWordCount > 0 && (
-              <div className="flex items-center gap-2 rounded-xl bg-card p-3 border border-border">
-                <BookOpen className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div className="overflow-hidden">
-                  <p className="text-xs font-medium text-foreground">
-                    {totalWordCount} words loaded
-                  </p>
-                  <p className="text-[11px] text-muted-foreground truncate">{samples.length} sample{samples.length !== 1 ? "s" : ""}</p>
-                </div>
-              </div>
-            )}
-            <div className="flex items-center gap-1.5 justify-center text-[10px] text-muted-foreground">
-              <Shield className="h-3 w-3" />
-              Private & encrypted
+        {!collapsed && totalWordCount > 0 && (
+          <div className="flex items-center gap-2 rounded-lg bg-card p-3 border border-border">
+            <BookOpen className="h-4 w-4 text-muted-foreground shrink-0" />
+            <div className="overflow-hidden">
+              <p className="text-xs font-medium text-foreground">
+                {totalWordCount} words loaded
+              </p>
+              <p className="text-[11px] text-muted-foreground truncate">{samples.length} sample{samples.length !== 1 ? "s" : ""}</p>
             </div>
           </div>
         )}

@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { Send, PenLine } from "lucide-react";
 import { WritingOutput } from "@/components/WritingOutput";
 import { AppSidebar, WritingSample } from "@/components/AppSidebar";
-import { LandingHero } from "@/components/LandingHero";
 import { streamGhostWrite } from "@/lib/stream-chat";
 import { toast } from "sonner";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -110,7 +109,25 @@ export default function Index() {
             {/* Output area */}
             <div className="flex-1 overflow-y-auto p-6">
               {!output && !isStreaming ? (
-                <LandingHero />
+                <div className="flex h-full items-center justify-center">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center max-w-md"
+                  >
+                    <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+                      <PenLine className="h-7 w-7 text-primary" />
+                    </div>
+                    <h2 className="font-serif text-xl font-semibold text-foreground mb-2">
+                      What would you like me to write?
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      {totalWordCount > 0
+                        ? `I've got ${totalWordCount} words across ${samples.length} sample${samples.length !== 1 ? "s" : ""}. Tell me what to write and I'll match your style.`
+                        : "Start by adding writing samples in the sidebar, then tell me what to write."}
+                    </p>
+                  </motion.div>
+                </div>
               ) : (
                 <div className="max-w-3xl mx-auto">
                   <WritingOutput content={output} isStreaming={isStreaming} />
