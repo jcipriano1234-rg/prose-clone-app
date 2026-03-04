@@ -7,18 +7,20 @@ import { streamGhostWrite } from "@/lib/stream-chat";
 import { toast } from "sonner";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
-type Mode = "email" | "essay" | "polish";
+type Mode = "email" | "essay" | "polish" | "freeform";
 
 const placeholders: Record<Mode, string> = {
   email: "Describe the email… e.g. 'Thank my boss for the raise, keep it casual'",
   essay: "What's the topic? e.g. 'Why remote work is the future'",
   polish: "Paste the text you want rewritten in your style…",
+  freeform: "Describe anything you want written… e.g. 'A cover letter for a marketing role' or 'A tweet thread about AI'",
 };
 
 const modeLabels: Record<Mode, string> = {
   email: "Ghost-Write Email",
   essay: "Write Essay",
   polish: "Polish Text",
+  freeform: "Freeform Writing",
 };
 
 export default function Index() {
