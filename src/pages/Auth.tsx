@@ -12,12 +12,12 @@ export default function Auth() {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
-        navigate("/", { replace: true });
+        navigate("/app", { replace: true });
       }
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) navigate("/", { replace: true });
+      if (session) navigate("/app", { replace: true });
     });
 
     return () => subscription.unsubscribe();
