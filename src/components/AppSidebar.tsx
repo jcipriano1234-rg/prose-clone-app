@@ -1,4 +1,4 @@
-import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2 } from "lucide-react";
+import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2, LogOut } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 type Mode = "email" | "essay" | "polish";
 
@@ -44,6 +45,7 @@ export function AppSidebar({ mode, onModeChange, onNewSession, samples, onAddSam
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const [newSampleText, setNewSampleText] = useState("");
+  const { signOut } = useAuth();
   const [samplesOpen, setSamplesOpen] = useState(true);
 
   const handleSubmitSample = () => {
@@ -196,7 +198,7 @@ export function AppSidebar({ mode, onModeChange, onNewSession, samples, onAddSam
         )}
       </SidebarContent>
 
-      <SidebarFooter className="p-4">
+      <SidebarFooter className="p-4 space-y-2">
         {!collapsed && totalWordCount > 0 && (
           <div className="flex items-center gap-2 rounded-lg bg-card p-3 border border-border">
             <BookOpen className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -208,6 +210,18 @@ export function AppSidebar({ mode, onModeChange, onNewSession, samples, onAddSam
             </div>
           </div>
         )}
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={() => signOut()}
+              tooltip="Sign out"
+              className="gap-3 text-muted-foreground hover:text-foreground"
+            >
+              <LogOut className="h-4 w-4" />
+              {!collapsed && <span className="text-sm">Sign out</span>}
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );
