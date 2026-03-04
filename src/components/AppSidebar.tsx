@@ -16,7 +16,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 
-type Mode = "email" | "essay" | "polish";
+type Mode = "email" | "essay" | "polish" | "freeform";
 
 export interface WritingSample {
   id: string;
@@ -39,6 +39,7 @@ const modes = [
   { id: "email" as Mode, icon: Mail, title: "Ghost-Write Email", description: "Compose emails in your voice" },
   { id: "essay" as Mode, icon: FileText, title: "Write Essay", description: "Long-form pieces, your style" },
   { id: "polish" as Mode, icon: Sparkles, title: "Polish Text", description: "Rewrite anything as you" },
+  { id: "freeform" as Mode, icon: PenLine, title: "Freeform Writing", description: "Any type of writing, your style" },
 ];
 
 export function AppSidebar({ mode, onModeChange, onNewSession, samples, onAddSample, onRemoveSample, totalWordCount }: AppSidebarProps) {

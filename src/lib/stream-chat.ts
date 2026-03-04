@@ -9,7 +9,7 @@ export async function streamGhostWrite({
   onError,
 }: {
   writingSamples: string;
-  mode: "email" | "essay" | "polish";
+  mode: "email" | "essay" | "polish" | "freeform";
   prompt: string;
   onDelta: (text: string) => void;
   onDone: () => void;
