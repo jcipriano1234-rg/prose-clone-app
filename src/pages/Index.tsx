@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send, PenLine, User } from "lucide-react";
+import { Send, PenLine, User, Copy, Check } from "lucide-react";
 import { AppSidebar, WritingSample } from "@/components/AppSidebar";
 import { streamGhostWrite, ChatMessage } from "@/lib/stream-chat";
 import { toast } from "sonner";
@@ -205,12 +205,19 @@ function MessageBubble({
   isStreaming?: boolean;
 }) {
   const isUser = message.role === "user";
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(message.content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`flex gap-3 ${isUser ? "flex-row-reverse" : ""}`}
+      className={`group flex gap-3 ${isUser ? "flex-row-reverse" : ""}`}
     >
       <div
         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
@@ -222,12 +229,20 @@ function MessageBubble({
         {isUser ? <User className="h-4 w-4" /> : <PenLine className="h-4 w-4" />}
       </div>
       <div
-        className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+        className={`relative max-w-[80%] rounded-2xl px-4 py-3 ${
           isUser
             ? "bg-primary text-primary-foreground"
             : "bg-card border border-border shadow-sm"
         }`}
       >
+        {!isUser && !isStreaming && (
+          <button
+            onClick={handleCopy}
+            className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-background text-muted-foreground shadow-sm opacity-0 transition-opacity group-hover:opacity-100 hover:text-foreground"
+          >
+            {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+          </button>
+        )}
         {isUser ? (
           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
         ) : (
