@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send, PenLine, User } from "lucide-react";
+import { Send, PenLine, User, Copy, Check } from "lucide-react";
 import { AppSidebar, WritingSample } from "@/components/AppSidebar";
 import { streamGhostWrite, ChatMessage } from "@/lib/stream-chat";
 import { toast } from "sonner";
