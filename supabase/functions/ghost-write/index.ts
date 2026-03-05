@@ -11,7 +11,7 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
 
   try {
-    const { writingSamples, mode, prompt } = await req.json();
+    const { writingSamples, mode, prompt, history } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
@@ -52,7 +52,9 @@ WRITING SAMPLES FROM THE USER:
 ${writingSamples}
 ---
 
-IMPORTANT: Write in their EXACT style with all their quirks and imperfections. The output must fool AI detectors while sounding perfectly natural to anyone who knows this person. Do NOT sanitize, formalize, or "improve" their style — replicate it faithfully, messy parts and all.`;
+IMPORTANT: Write in their EXACT style with all their quirks and imperfections. The output must fool AI detectors while sounding perfectly natural to anyone who knows this person. Do NOT sanitize, formalize, or "improve" their style — replicate it faithfully, messy parts and all.
+
+You are also a conversational assistant. When the user asks you to revise, shorten, lengthen, change tone, or otherwise modify previously generated text, do so while maintaining the same writing style from the samples. Keep the conversation natural.`;
 
     let taskPrompt = "";
     if (mode === "email") {
@@ -65,6 +67,31 @@ IMPORTANT: Write in their EXACT style with all their quirks and imperfections. T
       taskPrompt = `Write the following in this person's exact writing style. The request is: ${prompt}\n\nThis could be anything — a cover letter, social media post, speech, article, message, or any other type of writing. Match their voice, quirks, and style perfectly. Make it feel like they actually wrote it.`;
     }
 
+    // Build messages array with conversation history
+    const chatMessages: { role: string; content: string }[] = [
+      { role: "system", content: systemPrompt },
+    ];
+
+    // Add conversation history
+    const conversationHistory = Array.isArray(history) ? history : [];
+    if (conversationHistory.length > 0) {
+      // First message in history was the original request - add it with the task prompt framing
+      for (let i = 0; i < conversationHistory.length; i++) {
+        const msg = conversationHistory[i];
+        if (i === 0 && msg.role === "user") {
+          // Frame the first user message with the mode-specific task prompt
+          chatMessages.push({ role: "user", content: taskPrompt.replace(prompt, msg.content) });
+        } else {
+          chatMessages.push({ role: msg.role, content: msg.content });
+        }
+      }
+      // Current message is a follow-up
+      chatMessages.push({ role: "user", content: prompt });
+    } else {
+      // First message - use the task prompt
+      chatMessages.push({ role: "user", content: taskPrompt });
+    }
+
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
       {
@@ -75,10 +102,7 @@ IMPORTANT: Write in their EXACT style with all their quirks and imperfections. T
         },
         body: JSON.stringify({
           model: "google/gemini-3-flash-preview",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: taskPrompt },
-          ],
+          messages: chatMessages,
           stream: true,
         }),
       }
