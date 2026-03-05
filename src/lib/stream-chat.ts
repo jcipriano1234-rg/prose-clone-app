@@ -1,9 +1,15 @@
 const GHOST_WRITE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ghost-write`;
 
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
 export async function streamGhostWrite({
   writingSamples,
   mode,
   prompt,
+  history,
   onDelta,
   onDone,
   onError,
@@ -11,6 +17,7 @@ export async function streamGhostWrite({
   writingSamples: string;
   mode: "email" | "essay" | "polish" | "freeform";
   prompt: string;
+  history?: ChatMessage[];
   onDelta: (text: string) => void;
   onDone: () => void;
   onError: (error: string) => void;
@@ -22,7 +29,7 @@ export async function streamGhostWrite({
         "Content-Type": "application/json",
         Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
       },
-      body: JSON.stringify({ writingSamples, mode, prompt }),
+      body: JSON.stringify({ writingSamples, mode, prompt, history: history || [] }),
     });
 
     if (!resp.ok) {
