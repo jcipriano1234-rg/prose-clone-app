@@ -1,11 +1,12 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Send, PenLine, User, Copy, Check } from "lucide-react";
-import { AppSidebar, WritingSample } from "@/components/AppSidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 import { streamGhostWrite, ChatMessage } from "@/lib/stream-chat";
 import { toast } from "sonner";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import ReactMarkdown from "react-markdown";
+import { useWritingSamples } from "@/hooks/useWritingSamples";
 
 type Mode = "email" | "essay" | "polish" | "freeform";
 
@@ -24,7 +25,7 @@ const modeLabels: Record<Mode, string> = {
 };
 
 export default function Index() {
-  const [samples, setSamples] = useState<WritingSample[]>([]);
+  const { samples, addSample, removeSample, totalWordCount, allSamplesText } = useWritingSamples();
   const [mode, setMode] = useState<Mode>("email");
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -32,24 +33,16 @@ export default function Index() {
   const [streamingContent, setStreamingContent] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const totalWordCount = samples.reduce((sum, s) => sum + s.wordCount, 0);
-  const allSamplesText = samples.map((s) => s.text).join("\n\n---\n\n");
-
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streamingContent]);
 
   const handleAddSample = (text: string) => {
-    const wc = text.split(/\s+/).filter(Boolean).length;
-    setSamples((prev) => [
-      { id: crypto.randomUUID(), text, addedAt: new Date(), wordCount: wc },
-      ...prev,
-    ]);
-    toast.success(`Added sample (${wc} words)`);
+    addSample(text);
   };
 
   const handleRemoveSample = (id: string) => {
-    setSamples((prev) => prev.filter((s) => s.id !== id));
+    removeSample(id);
   };
 
   const handleGenerate = useCallback(async () => {
