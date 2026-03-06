@@ -25,16 +25,13 @@ const modeLabels: Record<Mode, string> = {
 };
 
 export default function Index() {
-  const [samples, setSamples] = useState<WritingSample[]>([]);
+  const { samples, addSample, removeSample, totalWordCount, allSamplesText } = useWritingSamples();
   const [mode, setMode] = useState<Mode>("email");
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const totalWordCount = samples.reduce((sum, s) => sum + s.wordCount, 0);
-  const allSamplesText = samples.map((s) => s.text).join("\n\n---\n\n");
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
