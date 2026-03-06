@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import ReactMarkdown from "react-markdown";
 import { useWritingSamples } from "@/hooks/useWritingSamples";
+import { useChatHistory } from "@/hooks/useChatHistory";
 
 type Mode = "email" | "essay" | "polish" | "freeform";
 
@@ -26,16 +27,31 @@ const modeLabels: Record<Mode, string> = {
 
 export default function Index() {
   const { samples, addSample, removeSample, totalWordCount, allSamplesText } = useWritingSamples();
+  const {
+    sessions, activeSessionId, setActiveSessionId,
+    loadSessionMessages, createSession, saveMessage, deleteSession, startNewSession,
+  } = useChatHistory();
   const [mode, setMode] = useState<Mode>("email");
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const currentSessionRef = useRef<string | null>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streamingContent]);
+
+  // Load messages when selecting a session
+  const handleSelectSession = useCallback(async (sessionId: string) => {
+    setActiveSessionId(sessionId);
+    currentSessionRef.current = sessionId;
+    const msgs = await loadSessionMessages(sessionId);
+    setMessages(msgs);
+    setStreamingContent("");
+    setPrompt("");
+  }, [loadSessionMessages, setActiveSessionId]);
 
   const handleAddSample = (text: string) => {
     addSample(text);
@@ -62,6 +78,21 @@ export default function Index() {
     setStreamingContent("");
     setIsStreaming(true);
 
+    // Create or reuse session
+    let sessionId = currentSessionRef.current;
+    if (!sessionId) {
+      sessionId = await createSession(mode, prompt.trim());
+      if (!sessionId) {
+        toast.error("Failed to create session.");
+        setIsStreaming(false);
+        return;
+      }
+      currentSessionRef.current = sessionId;
+    }
+
+    // Save user message
+    await saveMessage(sessionId, "user", prompt.trim());
+
     let accumulated = "";
     await streamGhostWrite({
       writingSamples: allSamplesText,
@@ -72,10 +103,14 @@ export default function Index() {
         accumulated += chunk;
         setStreamingContent(accumulated);
       },
-      onDone: () => {
+      onDone: async () => {
         setMessages((prev) => [...prev, { role: "assistant", content: accumulated }]);
         setStreamingContent("");
         setIsStreaming(false);
+        // Save assistant message
+        if (currentSessionRef.current) {
+          await saveMessage(currentSessionRef.current, "assistant", accumulated);
+        }
       },
       onError: (err) => {
         setIsStreaming(false);
@@ -83,12 +118,14 @@ export default function Index() {
         toast.error(err);
       },
     });
-  }, [samples, allSamplesText, mode, prompt, messages]);
+  }, [samples, allSamplesText, mode, prompt, messages, createSession, saveMessage]);
 
   const handleNewSession = () => {
     setPrompt("");
     setMessages([]);
     setStreamingContent("");
+    currentSessionRef.current = null;
+    startNewSession();
   };
 
   return (
@@ -102,6 +139,10 @@ export default function Index() {
           onAddSample={handleAddSample}
           onRemoveSample={handleRemoveSample}
           totalWordCount={totalWordCount}
+          chatSessions={sessions}
+          activeSessionId={activeSessionId}
+          onSelectSession={handleSelectSession}
+          onDeleteSession={deleteSession}
         />
 
         <div className="flex-1 flex flex-col min-w-0">
