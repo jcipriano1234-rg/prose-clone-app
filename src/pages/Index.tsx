@@ -38,16 +38,11 @@ export default function Index() {
   }, [messages, streamingContent]);
 
   const handleAddSample = (text: string) => {
-    const wc = text.split(/\s+/).filter(Boolean).length;
-    setSamples((prev) => [
-      { id: crypto.randomUUID(), text, addedAt: new Date(), wordCount: wc },
-      ...prev,
-    ]);
-    toast.success(`Added sample (${wc} words)`);
+    addSample(text);
   };
 
   const handleRemoveSample = (id: string) => {
-    setSamples((prev) => prev.filter((s) => s.id !== id));
+    removeSample(id);
   };
 
   const handleGenerate = useCallback(async () => {
