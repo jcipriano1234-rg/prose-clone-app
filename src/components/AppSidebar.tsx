@@ -1,4 +1,4 @@
-import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2, LogOut } from "lucide-react";
+import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2, LogOut, MessageSquare } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -15,6 +15,7 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import type { ChatSession } from "@/hooks/useChatHistory";
 
 type Mode = "email" | "essay" | "polish" | "freeform";
 
@@ -33,6 +34,10 @@ interface AppSidebarProps {
   onAddSample: (text: string) => void;
   onRemoveSample: (id: string) => void;
   totalWordCount: number;
+  chatSessions: ChatSession[];
+  activeSessionId: string | null;
+  onSelectSession: (id: string) => void;
+  onDeleteSession: (id: string) => void;
 }
 
 const modes = [
@@ -42,12 +47,17 @@ const modes = [
   { id: "freeform" as Mode, icon: PenLine, title: "Freeform Writing", description: "Any type of writing, your style" },
 ];
 
-export function AppSidebar({ mode, onModeChange, onNewSession, samples, onAddSample, onRemoveSample, totalWordCount }: AppSidebarProps) {
+export function AppSidebar({
+  mode, onModeChange, onNewSession,
+  samples, onAddSample, onRemoveSample, totalWordCount,
+  chatSessions, activeSessionId, onSelectSession, onDeleteSession,
+}: AppSidebarProps) {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const [newSampleText, setNewSampleText] = useState("");
   const { signOut } = useAuth();
-  const [samplesOpen, setSamplesOpen] = useState(true);
+  const [samplesOpen, setSamplesOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(true);
 
   const handleSubmitSample = () => {
     if (newSampleText.trim()) {
@@ -119,6 +129,69 @@ export function AppSidebar({ mode, onModeChange, onNewSession, samples, onAddSam
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* Chat History */}
+        {!collapsed && (
+          <SidebarGroup>
+            <Collapsible open={historyOpen} onOpenChange={setHistoryOpen}>
+              <CollapsibleTrigger className="w-full">
+                <SidebarGroupLabel className="text-[11px] uppercase tracking-wider text-muted-foreground flex items-center justify-between w-full cursor-pointer hover:text-foreground transition-colors">
+                  <span className="flex items-center gap-1.5">
+                    <MessageSquare className="h-3.5 w-3.5" />
+                    Chat History
+                    {chatSessions.length > 0 && (
+                      <span className="text-[10px] font-normal rounded-full bg-primary/10 text-primary px-1.5 py-0.5">
+                        {chatSessions.length}
+                      </span>
+                    )}
+                  </span>
+                  <ChevronDown className={`h-3.5 w-3.5 transition-transform ${historyOpen ? "rotate-180" : ""}`} />
+                </SidebarGroupLabel>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarGroupContent className="mt-2 space-y-1 px-1">
+                  {chatSessions.length === 0 ? (
+                    <p className="text-[11px] text-muted-foreground text-center py-2">
+                      No conversations yet.
+                    </p>
+                  ) : (
+                    <div className="space-y-1 max-h-60 overflow-y-auto">
+                      {chatSessions.map((session) => (
+                        <div
+                          key={session.id}
+                          className={`group flex items-start gap-2 rounded-md p-2 text-xs cursor-pointer transition-colors ${
+                            activeSessionId === session.id
+                              ? "bg-primary/10 border border-primary/20"
+                              : "bg-card border border-border hover:bg-accent"
+                          }`}
+                          onClick={() => onSelectSession(session.id)}
+                        >
+                          <MessageSquare className="h-3.5 w-3.5 mt-0.5 shrink-0 text-muted-foreground" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-foreground truncate font-medium">{session.title}</p>
+                            <p className="text-[10px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                              <Clock className="h-2.5 w-2.5" />
+                              {session.updatedAt.toLocaleDateString()}
+                            </p>
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDeleteSession(session.id);
+                            }}
+                            className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-all shrink-0 mt-0.5"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </Collapsible>
+          </SidebarGroup>
+        )}
+
         {/* Writing Samples */}
         {!collapsed && (
           <SidebarGroup>
@@ -139,7 +212,6 @@ export function AppSidebar({ mode, onModeChange, onNewSession, samples, onAddSam
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <SidebarGroupContent className="mt-2 space-y-2 px-1">
-                  {/* Add new sample */}
                   <div className="space-y-1.5">
                     <textarea
                       value={newSampleText}
@@ -156,7 +228,6 @@ export function AppSidebar({ mode, onModeChange, onNewSession, samples, onAddSam
                     </button>
                   </div>
 
-                  {/* Sample history */}
                   {samples.length > 0 && (
                     <div className="space-y-1 pt-1">
                       <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium px-1">
