@@ -8,7 +8,12 @@ const plans = [
     name: "Free",
     price: "$0",
     period: "",
-    features: ["5 generations / day", "1 writing profile", "Email & essay modes"],
+    features: [
+      "3 credits / day (resets daily)",
+      "1 writing profile",
+      "Email & essay modes",
+      "Costs: 3 per generation, 2 per edit, 1 per analysis",
+    ],
     cta: "Get started free",
   },
   {
@@ -16,11 +21,11 @@ const plans = [
     price: "$4.99",
     period: "/mo",
     features: [
-      "Unlimited generations",
+      "Monthly credit pool",
       "Unlimited writing profiles",
-      "All modes + Polish",
+      "All writing modes + Polish",
       "Priority speed",
-      "Export & history",
+      "Export & chat history",
     ],
     cta: "Start free trial",
   },
@@ -29,6 +34,7 @@ const plans = [
     price: "$11.99",
     period: "/mo",
     features: [
+      "Unlimited credits",
       "Everything in Pro",
       "5 team seats",
       "Shared style library",
