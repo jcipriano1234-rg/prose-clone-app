@@ -1,3 +1,5 @@
+import { supabase } from "@/integrations/supabase/client";
+
 const GHOST_WRITE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ghost-write`;
 
 export interface ChatMessage {
@@ -33,11 +35,19 @@ export async function streamGhostWrite({
   onError: (error: string) => void;
 }) {
   try {
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+
+    if (!token) {
+      onError("Please sign in to generate content.");
+      return;
+    }
+
     const resp = await fetch(GHOST_WRITE_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ writingSamples, mode, prompt, history: history || [], tone: tone || { formality: 30, length: 50, creativity: 50 }, styleProfile: styleProfile || null }),
     });
