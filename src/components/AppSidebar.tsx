@@ -1,4 +1,4 @@
-import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2, LogOut, MessageSquare, SlidersHorizontal } from "lucide-react";
+import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2, LogOut, MessageSquare, SlidersHorizontal, ClipboardList } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import type { ChatSession } from "@/hooks/useChatHistory";
 import { ToneSliders, type ToneSettings } from "@/components/ToneSliders";
@@ -60,6 +61,7 @@ export function AppSidebar({
   const collapsed = state === "collapsed";
   const [newSampleText, setNewSampleText] = useState("");
   const { signOut } = useAuth();
+  const navigate = useNavigate();
   const [samplesOpen, setSamplesOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(true);
   const [toneOpen, setToneOpen] = useState(false);
