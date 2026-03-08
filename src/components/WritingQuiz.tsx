@@ -67,8 +67,8 @@ export function WritingQuiz({ onComplete, onSkip, initialAnswers, isEditing }: W
   const current = quizQuestions[currentStep];
   const isLast = currentStep === quizQuestions.length - 1;
   const currentAnswer = answers[current.id] || "";
-  const canProceed = currentAnswer.trim().length > 10;
-  const answeredCount = quizQuestions.filter((q) => (answers[q.id] || "").trim().length > 10).length;
+  const canProceed = currentAnswer.trim().split(/\s+/).filter(Boolean).length >= 10;
+  const answeredCount = quizQuestions.filter((q) => (answers[q.id] || "").trim().split(/\s+/).filter(Boolean).length >= 10).length;
 
   const handleNext = () => {
     if (!canProceed) {
