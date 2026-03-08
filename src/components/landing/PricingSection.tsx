@@ -1,7 +1,14 @@
 import { motion } from "framer-motion";
-import { Check, ArrowRight } from "lucide-react";
+import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+
+const sharedFeatures = [
+  "All writing modes",
+  "Generation, editing & analysis",
+  "Style cloning & voice profiles",
+  "Export & chat history",
+];
 
 const creditCosts = "3 credits per generation · 2 per edit · 1 per analysis";
 
@@ -10,39 +17,27 @@ const plans = [
     name: "Free",
     price: "$0",
     period: "",
-    features: [
-      "3 credits / day (resets daily)",
-      "1 writing profile",
-      "Email & essay modes",
-    ],
+    credit: "3 credits / day",
+    creditNote: "Resets daily",
+    extras: [] as string[],
     cta: "Get started free",
   },
   {
     name: "Pro",
     price: "$4.99",
     period: "/mo",
-    features: [
-      "300 credits / month",
-      "Unlimited writing profiles",
-      "All writing modes + Polish",
-      "Priority speed",
-      "Export & chat history",
-    ],
+    credit: "300 credits / month",
+    creditNote: "Resets monthly",
+    extras: ["Priority speed"],
     cta: "Start free trial",
   },
   {
     name: "Team",
     price: "$11.99",
     period: "/mo",
-    features: [
-      "Unlimited credits",
-      "Unlimited writing profiles",
-      "All writing modes + Polish",
-      "Priority speed",
-      "Export & chat history",
-      "Shared style library",
-      "Admin dashboard",
-    ],
+    credit: "Unlimited credits",
+    creditNote: "No limits",
+    extras: ["Priority speed", "Shared style library", "Admin dashboard"],
     cta: "Contact us",
   },
 ];
@@ -73,8 +68,11 @@ export default function PricingSection() {
         <h2 className="font-serif text-3xl sm:text-4xl font-bold text-center mb-4">
           Simple, honest pricing
         </h2>
-        <p className="text-center text-muted-foreground mb-16 max-w-md mx-auto">
-          Start free. Upgrade when you need more power.
+        <p className="text-center text-muted-foreground mb-4 max-w-md mx-auto">
+          Every plan includes all features. You only pay for more credits.
+        </p>
+        <p className="text-center text-xs text-muted-foreground mb-16">
+          {creditCosts}
         </p>
 
         <div className="grid sm:grid-cols-3 gap-6">
@@ -89,15 +87,26 @@ export default function PricingSection() {
               className="rounded-2xl border border-border bg-card p-8 flex flex-col shadow-card"
             >
               <h3 className="font-serif text-xl font-bold">{plan.name}</h3>
-              <div className="mt-3 mb-6">
+              <div className="mt-3 mb-1">
                 <span className="text-4xl font-bold">{plan.price}</span>
                 <span className="text-muted-foreground text-sm">{plan.period}</span>
               </div>
+              <div className="mb-6">
+                <span className="text-sm font-semibold text-primary">{plan.credit}</span>
+                <span className="text-xs text-muted-foreground ml-2">({plan.creditNote})</span>
+              </div>
+
               <ul className="space-y-3 flex-1 mb-8">
-                {plan.features.map((f) => (
+                {sharedFeatures.map((f) => (
                   <li key={f} className="flex items-start gap-2 text-sm">
                     <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                     <span>{f}</span>
+                  </li>
+                ))}
+                {plan.extras.map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                    <span className="font-medium">{f}</span>
                   </li>
                 ))}
               </ul>
@@ -111,9 +120,6 @@ export default function PricingSection() {
             </motion.div>
           ))}
         </div>
-        <p className="text-center text-sm text-muted-foreground mt-8">
-          {creditCosts}
-        </p>
       </div>
     </section>
   );
