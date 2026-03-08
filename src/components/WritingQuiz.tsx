@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowLeft, CheckCircle2, MessageCircle } from "lucide-react";
+import { ArrowRight, ArrowLeft, CheckCircle2, MessageCircle, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-const quizQuestions = [
+export const quizQuestions = [
   {
     id: "casual-vibe",
     emoji: "👋",
@@ -43,19 +43,32 @@ const quizQuestions = [
 ];
 
 interface WritingQuizProps {
-  onComplete: (answers: string[]) => void;
+  onComplete: (answers: Record<string, string>) => void;
   onSkip?: () => void;
+  initialAnswers?: Record<string, string>;
+  isEditing?: boolean;
 }
 
-export function WritingQuiz({ onComplete, onSkip }: WritingQuizProps) {
+export function WritingQuiz({ onComplete, onSkip, initialAnswers, isEditing }: WritingQuizProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState<string[]>(Array(quizQuestions.length).fill(""));
+  const [answers, setAnswers] = useState<Record<string, string>>(() => {
+    const map: Record<string, string> = {};
+    quizQuestions.forEach((q) => { map[q.id] = ""; });
+    return map;
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (initialAnswers && Object.keys(initialAnswers).length > 0) {
+      setAnswers((prev) => ({ ...prev, ...initialAnswers }));
+    }
+  }, [initialAnswers]);
 
   const current = quizQuestions[currentStep];
   const isLast = currentStep === quizQuestions.length - 1;
-  const canProceed = answers[currentStep].trim().length > 10;
-  const answeredCount = answers.filter((a) => a.trim().length > 10).length;
+  const currentAnswer = answers[current.id] || "";
+  const canProceed = currentAnswer.trim().length > 10;
+  const answeredCount = quizQuestions.filter((q) => (answers[q.id] || "").trim().length > 10).length;
 
   const handleNext = () => {
     if (!canProceed) {
@@ -75,13 +88,13 @@ export function WritingQuiz({ onComplete, onSkip }: WritingQuizProps) {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    const validAnswers = answers.filter((a) => a.trim().length > 10);
-    if (validAnswers.length < 3) {
+    const validCount = quizQuestions.filter((q) => (answers[q.id] || "").trim().length > 10).length;
+    if (validCount < 3) {
       toast.error("Answer at least 3 questions so we can learn your style.");
       setIsSubmitting(false);
       return;
     }
-    onComplete(validAnswers);
+    onComplete(answers);
   };
 
   return (
@@ -90,24 +103,29 @@ export function WritingQuiz({ onComplete, onSkip }: WritingQuizProps) {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 mb-4">
-            <MessageCircle className="h-4 w-4 text-primary" />
-            <span className="text-xs font-medium text-primary">Writing Personality Quiz</span>
+            {isEditing ? <Pencil className="h-4 w-4 text-primary" /> : <MessageCircle className="h-4 w-4 text-primary" />}
+            <span className="text-xs font-medium text-primary">
+              {isEditing ? "Edit Your Writing Quiz" : "Writing Personality Quiz"}
+            </span>
           </div>
           <h1 className="font-serif text-2xl font-semibold text-foreground">
-            Let's learn how you write
+            {isEditing ? "Update your answers anytime" : "Let's learn how you write"}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Answer like you'd actually text or post — no filter needed.
+            {isEditing
+              ? "Change any answer — your writing profile updates instantly."
+              : "Answer like you'd actually text or post — no filter needed."}
           </p>
         </div>
 
         {/* Progress */}
         <div className="flex gap-1.5 mb-6">
-          {quizQuestions.map((_, i) => (
-            <div
+          {quizQuestions.map((q, i) => (
+            <button
               key={i}
-              className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                i < currentStep
+              onClick={() => setCurrentStep(i)}
+              className={`h-1.5 flex-1 rounded-full transition-all duration-300 cursor-pointer hover:opacity-80 ${
+                (answers[q.id] || "").trim().length > 10
                   ? "bg-primary"
                   : i === currentStep
                   ? "bg-primary/60"
@@ -138,11 +156,9 @@ export function WritingQuiz({ onComplete, onSkip }: WritingQuizProps) {
             </div>
 
             <textarea
-              value={answers[currentStep]}
+              value={currentAnswer}
               onChange={(e) => {
-                const newAnswers = [...answers];
-                newAnswers[currentStep] = e.target.value;
-                setAnswers(newAnswers);
+                setAnswers((prev) => ({ ...prev, [current.id]: e.target.value }));
               }}
               placeholder={current.placeholder}
               rows={5}
@@ -172,7 +188,7 @@ export function WritingQuiz({ onComplete, onSkip }: WritingQuizProps) {
                 {isLast ? (
                   <>
                     <CheckCircle2 className="h-4 w-4" />
-                    {isSubmitting ? "Saving…" : "Finish"}
+                    {isSubmitting ? "Saving…" : isEditing ? "Save Changes" : "Finish"}
                   </>
                 ) : (
                   <>
@@ -197,7 +213,7 @@ export function WritingQuiz({ onComplete, onSkip }: WritingQuizProps) {
               onClick={onSkip}
               className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
             >
-              Skip for now
+              {isEditing ? "Cancel" : "Skip for now"}
             </button>
           )}
         </div>
