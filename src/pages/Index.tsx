@@ -174,16 +174,16 @@ export default function Index() {
         />
 
         <div className="flex-1 flex flex-col min-w-0">
-          <header className="h-12 flex items-center justify-between border-b border-border bg-card/50 backdrop-blur-sm px-3 sm:px-4 gap-2">
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <header className="h-14 sm:h-12 flex items-center justify-between border-b border-border bg-card/50 backdrop-blur-sm px-3 sm:px-4 gap-2">
+            <div className="flex items-center gap-3 sm:gap-3 min-w-0">
               {/* Desktop: simple trigger */}
               <SidebarTrigger className="hidden sm:flex" />
-              {/* Mobile: prominent labeled button */}
-              <SidebarTrigger className="sm:hidden flex items-center gap-1.5 rounded-xl bg-primary text-primary-foreground px-3 py-1.5 text-xs font-medium shadow-soft hover:opacity-90 transition-all">
-                <Menu className="h-4 w-4" />
+              {/* Mobile: big labeled Menu button */}
+              <SidebarTrigger className="sm:hidden flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-4 py-2 text-sm font-semibold shadow-soft hover:opacity-90 transition-all">
+                <Menu className="h-5 w-5" />
                 <span>Menu</span>
               </SidebarTrigger>
-              <span className="text-sm font-medium text-foreground truncate">{modeLabels[mode]}</span>
+              <span className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{modeLabels[mode]}</span>
             </div>
             <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               {styleProfile && (
