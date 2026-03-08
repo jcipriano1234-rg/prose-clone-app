@@ -134,7 +134,29 @@ export function AppSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Chat History */}
+        {/* Tone Controls */}
+        {!collapsed && (
+          <SidebarGroup>
+            <Collapsible open={toneOpen} onOpenChange={setToneOpen}>
+              <CollapsibleTrigger className="w-full">
+                <SidebarGroupLabel className="text-[11px] uppercase tracking-wider text-muted-foreground flex items-center justify-between w-full cursor-pointer hover:text-foreground transition-colors">
+                  <span className="flex items-center gap-1.5">
+                    <SlidersHorizontal className="h-3.5 w-3.5" />
+                    Tone Controls
+                  </span>
+                  <ChevronDown className={`h-3.5 w-3.5 transition-transform ${toneOpen ? "rotate-180" : ""}`} />
+                </SidebarGroupLabel>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarGroupContent className="mt-2 px-1">
+                  <ToneSliders settings={toneSettings} onChange={onToneChange} />
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </Collapsible>
+          </SidebarGroup>
+        )}
+
+
         {!collapsed && (
           <SidebarGroup>
             <Collapsible open={historyOpen} onOpenChange={setHistoryOpen}>

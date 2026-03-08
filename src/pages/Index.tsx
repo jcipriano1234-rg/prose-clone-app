@@ -8,6 +8,9 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import ReactMarkdown from "react-markdown";
 import { useWritingSamples } from "@/hooks/useWritingSamples";
 import { useChatHistory } from "@/hooks/useChatHistory";
+import { defaultToneSettings, type ToneSettings } from "@/components/ToneSliders";
+import { TemplateLibrary } from "@/components/TemplateLibrary";
+import { AiDetectorScore } from "@/components/AiDetectorScore";
 
 type Mode = "email" | "essay" | "polish" | "freeform";
 
