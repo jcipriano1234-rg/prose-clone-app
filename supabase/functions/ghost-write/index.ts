@@ -20,7 +20,7 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    // --- Daily limit check ---
+    // --- Auth check ---
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -35,46 +35,44 @@ serve(async (req) => {
     );
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    if (userError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const userId = claimsData.claims.sub;
+    const userId = user.id;
 
-    // Get daily limit from profile
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("daily_limit")
-      .eq("user_id", userId)
-      .single();
+    // --- Grant daily credits if needed ---
+    await supabase.rpc("grant_daily_credits", { p_user_id: userId });
 
-    const dailyLimit = profile?.daily_limit ?? 5;
+    // --- Determine credit cost: 3 for new generation, 2 for follow-up edit ---
+    const isFollowUp = Array.isArray(history) && history.length > 0;
+    const creditCost = isFollowUp ? 2 : 3;
+    const actionType = isFollowUp ? "edit" : "generation";
 
-    // Count today's generations using the DB function
-    const { data: countData } = await supabase.rpc("get_daily_generation_count", { p_user_id: userId });
-    const todayCount = countData ?? 0;
+    // --- Deduct credits ---
+    const { data: remainingBalance } = await supabase.rpc("deduct_credits", {
+      p_user_id: userId,
+      p_amount: creditCost,
+      p_action: actionType,
+      p_description: `${mode} ${actionType}`,
+    });
 
-    if (todayCount >= dailyLimit) {
+    if (remainingBalance === -1) {
       return new Response(
         JSON.stringify({
-          error: "Daily generation limit reached. Upgrade to Pro for unlimited generations.",
-          limit_reached: true,
-          used: todayCount,
-          limit: dailyLimit,
+          error: "Not enough credits. Upgrade to Pro for more credits.",
+          credits_exhausted: true,
+          cost: creditCost,
         }),
         { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Log this generation
-    await supabase.from("generation_logs").insert({ user_id: userId, mode });
-
     // --- Build prompt ---
     const hasSamples = writingSamples && writingSamples.trim().length > 20;
 
-    // Build style analysis context if available
     let styleContext = "";
     if (styleProfile && typeof styleProfile === "object" && styleProfile.raw_analysis) {
       styleContext = `\n\nSTYLE ANALYSIS (use this to fine-tune your voice cloning):\n${styleProfile.raw_analysis}\n`;
