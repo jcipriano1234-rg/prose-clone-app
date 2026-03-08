@@ -5,16 +5,15 @@ import { Button } from "@/components/ui/button";
 
 const plans = [
   {
-    name: "Starter",
-    price: "Free",
+    name: "Free",
+    price: "$0",
     period: "",
     features: ["5 generations / day", "1 writing profile", "Email & essay modes"],
     cta: "Get started free",
-    highlighted: false,
   },
   {
     name: "Pro",
-    price: "$12",
+    price: "$4.99",
     period: "/mo",
     features: [
       "Unlimited generations",
@@ -24,11 +23,10 @@ const plans = [
       "Export & history",
     ],
     cta: "Start free trial",
-    highlighted: true,
   },
   {
     name: "Team",
-    price: "$29",
+    price: "$11.99",
     period: "/mo",
     features: [
       "Everything in Pro",
@@ -37,7 +35,6 @@ const plans = [
       "Admin dashboard",
     ],
     cta: "Contact us",
-    highlighted: false,
   },
 ];
 
