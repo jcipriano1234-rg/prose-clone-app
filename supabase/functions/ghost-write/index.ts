@@ -127,6 +127,10 @@ Output only final text. No explanations.`;
         body: JSON.stringify({
           model: "google/gemini-3-flash-preview",
           messages: chatMessages,
+          temperature: 1.15,
+          top_p: 0.95,
+          frequency_penalty: 0.5,
+          presence_penalty: 0.35,
           stream: true,
         }),
       }
