@@ -47,6 +47,24 @@ serve(async (req) => {
     }
     const userId = user.id;
 
+    // Grant daily credits if needed
+    await supabase.rpc("grant_daily_credits", { p_user_id: userId });
+
+    // Deduct 1 credit for style analysis
+    const { data: remainingBalance } = await supabase.rpc("deduct_credits", {
+      p_user_id: userId,
+      p_amount: 1,
+      p_action: "analysis",
+      p_description: "Style analysis",
+    });
+
+    if (remainingBalance === -1) {
+      return new Response(
+        JSON.stringify({ error: "Not enough credits for style analysis.", credits_exhausted: true }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Use AI to analyze writing style
     const analysisPrompt = `Analyze the following writing samples and extract a detailed writing style profile. Return a JSON object with these exact fields:
 

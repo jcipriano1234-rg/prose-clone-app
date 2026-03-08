@@ -10,7 +10,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import ReactMarkdown from "react-markdown";
 import { useWritingSamples } from "@/hooks/useWritingSamples";
 import { useChatHistory } from "@/hooks/useChatHistory";
-import { useGenerationLimit } from "@/hooks/useGenerationLimit";
+import { useCredits } from "@/hooks/useCredits";
 import { useStyleProfile } from "@/hooks/useStyleProfile";
 import { defaultToneSettings, type ToneSettings } from "@/components/ToneSliders";
 import { TemplateLibrary } from "@/components/TemplateLibrary";
@@ -39,7 +39,7 @@ export default function Index() {
     sessions, activeSessionId, setActiveSessionId,
     loadSessionMessages, createSession, saveMessage, deleteSession, startNewSession,
   } = useChatHistory();
-  const { used, limit, remaining, isLimitReached, refetch: refetchLimit } = useGenerationLimit();
+  const { balance, plan, isUnlimited, hasCredits, refetch: refetchCredits } = useCredits();
   const { styleProfile, analyzing, analyzeStyle } = useStyleProfile();
   const [mode, setMode] = useState<Mode>("email");
   const [prompt, setPrompt] = useState("");
@@ -87,10 +87,14 @@ export default function Index() {
       toast.error("Tell me what to write!");
       return;
     }
-    if (isLimitReached) {
-      toast.error("Daily generation limit reached. Upgrade to Pro for unlimited.");
+    if (!hasCredits) {
+      toast.error("Not enough credits. Upgrade your plan for more.");
       return;
     }
+
+    // Determine credit cost for display
+    const isFollowUp = messages.length > 0;
+    const creditCost = isFollowUp ? 2 : 3;
 
     const userMessage: ChatMessage = { role: "user", content: prompt.trim() };
     const updatedMessages = [...messages, userMessage];
@@ -132,7 +136,7 @@ export default function Index() {
           await saveMessage(currentSessionRef.current, "assistant", accumulated);
         }
         // Refresh generation count
-        refetchLimit();
+        refetchCredits();
       },
       onError: (err) => {
         setIsStreaming(false);
@@ -140,7 +144,7 @@ export default function Index() {
         toast.error(err);
       },
     });
-  }, [samples, allSamplesText, mode, prompt, messages, createSession, saveMessage, isLimitReached, toneSettings, styleProfile, refetchLimit]);
+  }, [samples, allSamplesText, mode, prompt, messages, createSession, saveMessage, hasCredits, toneSettings, styleProfile, refetchCredits]);
 
   const handleNewSession = () => {
     setPrompt("");
@@ -182,14 +186,14 @@ export default function Index() {
                 </span>
               )}
               <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
-                isLimitReached
+                !hasCredits
                   ? "bg-destructive/10 text-destructive"
-                  : remaining <= 2
+                  : balance <= 2 && !isUnlimited
                   ? "bg-primary/10 text-primary"
                   : "bg-muted text-muted-foreground"
               }`}>
                 <Zap className="h-3 w-3" />
-                {remaining}/{limit} left today
+                {isUnlimited ? "Unlimited" : `${balance} credits`}
               </div>
             </div>
           </header>
@@ -255,14 +259,14 @@ export default function Index() {
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     placeholder={
-                      isLimitReached
-                        ? "Daily limit reached — upgrade to Pro for unlimited"
+                      !hasCredits
+                        ? "Out of credits — upgrade for more"
                         : messages.length > 0
-                        ? "Ask for changes… e.g. 'Make it shorter' or 'More professional tone'"
+                        ? `Ask for changes (2 credits)… e.g. 'Make it shorter'`
                         : placeholders[mode]
                     }
                     rows={3}
-                    disabled={isLimitReached}
+                    disabled={!hasCredits}
                     className="w-full resize-none rounded-xl border border-border bg-background p-4 pr-14 font-sans text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
@@ -273,7 +277,7 @@ export default function Index() {
                   />
                   <button
                     onClick={handleGenerate}
-                    disabled={isStreaming || isLimitReached}
+                    disabled={isStreaming || !hasCredits}
                     className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-soft transition-all hover:opacity-90 disabled:opacity-50"
                   >
                     <Send className="h-4 w-4" />

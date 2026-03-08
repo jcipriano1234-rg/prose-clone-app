@@ -73,6 +73,33 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_transactions: {
+        Row: {
+          action: string
+          amount: number
+          created_at: string
+          description: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          action?: string
+          amount: number
+          created_at?: string
+          description?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          amount?: number
+          created_at?: string
+          description?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       generation_logs: {
         Row: {
           created_at: string
@@ -97,31 +124,40 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          credits_balance: number
           daily_limit: number
           default_mode: string
           display_name: string
           id: string
+          last_daily_grant: string
           onboarding_complete: boolean
+          plan: string
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          credits_balance?: number
           daily_limit?: number
           default_mode?: string
           display_name?: string
           id?: string
+          last_daily_grant?: string
           onboarding_complete?: boolean
+          plan?: string
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
+          credits_balance?: number
           daily_limit?: number
           default_mode?: string
           display_name?: string
           id?: string
+          last_daily_grant?: string
           onboarding_complete?: boolean
+          plan?: string
           updated_at?: string
           user_id?: string
         }
@@ -234,10 +270,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      deduct_credits: {
+        Args: {
+          p_action: string
+          p_amount: number
+          p_description?: string
+          p_user_id: string
+        }
+        Returns: number
+      }
+      get_credit_balance: { Args: { p_user_id: string }; Returns: number }
       get_daily_generation_count: {
         Args: { p_user_id: string }
         Returns: number
       }
+      grant_daily_credits: { Args: { p_user_id: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never
