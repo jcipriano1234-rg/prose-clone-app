@@ -5,16 +5,15 @@ import { Button } from "@/components/ui/button";
 
 const plans = [
   {
-    name: "Starter",
-    price: "Free",
+    name: "Free",
+    price: "$0",
     period: "",
     features: ["5 generations / day", "1 writing profile", "Email & essay modes"],
     cta: "Get started free",
-    highlighted: false,
   },
   {
     name: "Pro",
-    price: "$12",
+    price: "$4.99",
     period: "/mo",
     features: [
       "Unlimited generations",
@@ -24,11 +23,10 @@ const plans = [
       "Export & history",
     ],
     cta: "Start free trial",
-    highlighted: true,
   },
   {
     name: "Team",
-    price: "$29",
+    price: "$11.99",
     period: "/mo",
     features: [
       "Everything in Pro",
@@ -37,7 +35,6 @@ const plans = [
       "Admin dashboard",
     ],
     cta: "Contact us",
-    highlighted: false,
   },
 ];
 
@@ -80,17 +77,8 @@ export default function PricingSection() {
               whileInView="visible"
               viewport={{ once: true }}
               custom={i}
-              className={`rounded-2xl border p-8 flex flex-col ${
-                plan.highlighted
-                  ? "border-primary bg-card shadow-lg ring-2 ring-primary/20 scale-[1.02]"
-                  : "border-border bg-card shadow-card"
-              }`}
+              className="rounded-2xl border border-border bg-card p-8 flex flex-col shadow-card"
             >
-              {plan.highlighted && (
-                <span className="text-xs font-semibold text-primary uppercase tracking-wider mb-3">
-                  Most popular
-                </span>
-              )}
               <h3 className="font-serif text-xl font-bold">{plan.name}</h3>
               <div className="mt-3 mb-6">
                 <span className="text-4xl font-bold">{plan.price}</span>
@@ -105,12 +93,11 @@ export default function PricingSection() {
                 ))}
               </ul>
               <Button
-                variant={plan.highlighted ? "default" : "outline"}
+                variant="outline"
                 className="w-full rounded-xl"
                 onClick={() => navigate("/auth")}
               >
                 {plan.cta}
-                {plan.highlighted && <ArrowRight className="ml-1 h-3.5 w-3.5" />}
               </Button>
             </motion.div>
           ))}
