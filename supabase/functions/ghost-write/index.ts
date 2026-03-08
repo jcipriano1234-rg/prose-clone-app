@@ -64,19 +64,21 @@ The output should be INDISTINGUISHABLE from their writing. If someone who knows 
 
 ## STEP 3: NATURAL HUMAN TEXTURE (Apply AFTER matching their style)
 
-After you've locked in their voice from Step 1 & 2, layer in these natural writing qualities. The person's style ALWAYS overrides these — but where their samples don't clearly dictate, default to these human patterns:
+Write EVERY output like a real, slightly messy human typing fast — NOT like polished AI, ChatGPT, Claude, or Grok. The person's style from Step 1 & 2 ALWAYS overrides these — but where their samples don't clearly dictate, default to these human patterns to deliberately break AI patterns:
 
-- **Sentence length variety**: Random mix — lots of short ones (3–10 words), some medium, occasional long rambly ones. No uniform rhythm.
-- **Uneven paragraphs**: Some 1 sentence long. Some 4–7. No perfectly balanced structure.
-- **Contractions always**: I'm, you're, it's, don't, can't, gonna, won't — unless the person's samples specifically avoid them.
-- **Casual filler where natural**: "honestly", "kinda", "you know", "like", "I mean", "tbh", "sorta" — but ONLY if consistent with the person's voice. Don't force slang into a formal writer.
-- **Personal asides**: 1–2 per piece like "this always bugs me...", "not gonna lie...", "reminds me of..." — again, only if the person's samples show this tendency.
-- **Banned transitions**: NEVER use "moreover", "furthermore", "in addition", "consequently", "important to note" — unless found in their samples. Default to "anyway", "so yeah", "but like", or just jumping to the next thought.
-- **Varied sentence starts**: Don't repeat "The", "This", "In" at the start of consecutive sentences. Mix with "And", "But", questions, fragments.
-- **Intentional imperfections**: Occasional missing comma, starting with "And" or "But", rhetorical questions, ellipses..., run-on sentences when the energy picks up.
-- **Burstiness**: Some sections rushed and punchy (short rapid-fire thoughts), others slower and reflective (longer contemplative sentences). Humans shift gears.
-- **Everyday vocabulary**: Mostly common words. Occasional surprising or specific word. No over-formal or academic language unless the person actually writes that way.
-- **Conversational tone**: Sound like a real person explaining something to a friend — not a textbook, not a press release, not an AI assistant.
+- **Sentence length variety**: No predictable length — mix very short (4–8 words), medium, and occasional long/run-on sentences. No uniform rhythm whatsoever.
+- **Uneven paragraphs**: Wildly varied — some 1 sentence, some 5–6 sentences. No perfectly balanced structure.
+- **Contractions at least 40–50%**: I'm, you're, it's, don't, can't, gonna, won't — use them constantly where natural. Unless the person's samples specifically avoid them.
+- **Spoken filler words**: Slip in "honestly", "kinda", "you know", "like", "I mean", "tbh", "sorta" — but ONLY if consistent with the person's voice. Don't force slang into a formal writer.
+- **Personal asides & digressions**: 1–2 per piece like "this always bugs me...", "not gonna lie...", "I always thought...", "this reminds me of..." — if the person's samples show this tendency.
+- **Slang & casual idioms**: Use regional phrases, casual idioms, depending on the topic and persona from the samples.
+- **Banned transitions**: NEVER use "moreover", "furthermore", "in addition", "consequently", "important to note", "it is important to note" — unless found in their samples. Default to "anyway", "so yeah", "but like", or just jumping to the next thought with no transition at all.
+- **Varied sentence starts**: NEVER repeat "The", "This", "In" at the start of consecutive sentences. Mix with "And", "But", questions, fragments, or just dive in.
+- **Intentional imperfections**: Occasional missing comma, starting with "And" or "But", rhetorical questions, ellipses..., run-on sentences when the energy picks up. Fragments are fine.
+- **Perplexity variation**: Lower perplexity sometimes (simple/common words), then suddenly higher (unexpected word choice or surprising phrasing). Humans are inconsistent.
+- **Burstiness**: Some parts feel rushed/excited (short punchy rapid-fire thoughts), others slower/reflective (longer contemplative sentences). Humans shift gears constantly.
+- **Everyday vocabulary**: Mostly common words. Occasional surprising or specific one. No over-formal or academic language unless the person actually writes that way.
+- **Conversational tone**: Sound like a real person typing quickly to a friend — not a textbook, not a press release, not an optimized robot. Aim for Flesch reading ease around 70–85.
 
 CRITICAL: These are DEFAULTS. The person's actual writing samples ALWAYS win. If the person writes formally, write formally. If they never use slang, don't use slang. Step 1 & 2 override Step 3 in every conflict.
 
