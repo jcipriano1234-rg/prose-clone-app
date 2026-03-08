@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send, PenLine, User, Copy, Check, Sparkles } from "lucide-react";
+import { Send, PenLine, User, Copy, Check } from "lucide-react";
 import { AppSidebar } from "@/components/AppSidebar";
 import { streamGhostWrite, ChatMessage } from "@/lib/stream-chat";
 import { toast } from "sonner";
@@ -43,6 +43,7 @@ export default function Index() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streamingContent]);
 
+  // Load messages when selecting a session
   const handleSelectSession = useCallback(async (sessionId: string) => {
     setActiveSessionId(sessionId);
     currentSessionRef.current = sessionId;
@@ -77,6 +78,7 @@ export default function Index() {
     setStreamingContent("");
     setIsStreaming(true);
 
+    // Create or reuse session
     let sessionId = currentSessionRef.current;
     if (!sessionId) {
       sessionId = await createSession(mode, prompt.trim());
@@ -88,6 +90,7 @@ export default function Index() {
       currentSessionRef.current = sessionId;
     }
 
+    // Save user message
     await saveMessage(sessionId, "user", prompt.trim());
 
     let accumulated = "";
@@ -104,6 +107,7 @@ export default function Index() {
         setMessages((prev) => [...prev, { role: "assistant", content: accumulated }]);
         setStreamingContent("");
         setIsStreaming(false);
+        // Save assistant message
         if (currentSessionRef.current) {
           await saveMessage(currentSessionRef.current, "assistant", accumulated);
         }
@@ -115,58 +119,6 @@ export default function Index() {
       },
     });
   }, [samples, allSamplesText, mode, prompt, messages, createSession, saveMessage]);
-
-  const handleHumanizeMore = useCallback(async (messageIndex: number) => {
-    if (isStreaming || samples.length === 0) return;
-
-    const targetMsg = messages[messageIndex];
-    if (!targetMsg || targetMsg.role !== "assistant") return;
-
-    const humanizePrompt = `Humanize this MORE. Take the following text and rewrite it with way more human messiness — more contractions, more fragments, more casual fillers (tbh, kinda, honestly), shorter punchy sentences mixed with occasional run-ons, uneven paragraphs, slight imperfections. Make it sound like someone typing fast to a friend. Keep the same meaning and content but crank the human texture to max:\n\n${targetMsg.content}`;
-
-    const userMessage: ChatMessage = { role: "user", content: "Humanize more" };
-    setMessages((prev) => [...prev, userMessage]);
-    setStreamingContent("");
-    setIsStreaming(true);
-
-    let sessionId = currentSessionRef.current;
-    if (!sessionId) {
-      sessionId = await createSession(mode, "Humanize more");
-      if (!sessionId) {
-        toast.error("Failed to create session.");
-        setIsStreaming(false);
-        return;
-      }
-      currentSessionRef.current = sessionId;
-    }
-
-    await saveMessage(sessionId, "user", "Humanize more");
-
-    let accumulated = "";
-    await streamGhostWrite({
-      writingSamples: allSamplesText,
-      mode,
-      prompt: humanizePrompt,
-      history: messages,
-      onDelta: (chunk) => {
-        accumulated += chunk;
-        setStreamingContent(accumulated);
-      },
-      onDone: async () => {
-        setMessages((prev) => [...prev, { role: "assistant", content: accumulated }]);
-        setStreamingContent("");
-        setIsStreaming(false);
-        if (currentSessionRef.current) {
-          await saveMessage(currentSessionRef.current, "assistant", accumulated);
-        }
-      },
-      onError: (err) => {
-        setIsStreaming(false);
-        setStreamingContent("");
-        toast.error(err);
-      },
-    });
-  }, [isStreaming, samples, messages, allSamplesText, mode, createSession, saveMessage]);
 
   const handleNewSession = () => {
     setPrompt("");
@@ -225,15 +177,7 @@ export default function Index() {
               ) : (
                 <div className="max-w-3xl mx-auto space-y-6">
                   {messages.map((msg, i) => (
-                    <MessageBubble
-                      key={i}
-                      message={msg}
-                      onHumanizeMore={
-                        msg.role === "assistant" && !isStreaming
-                          ? () => handleHumanizeMore(i)
-                          : undefined
-                      }
-                    />
+                    <MessageBubble key={i} message={msg} />
                   ))}
                   {isStreaming && streamingContent && (
                     <MessageBubble
@@ -290,11 +234,9 @@ export default function Index() {
 function MessageBubble({
   message,
   isStreaming = false,
-  onHumanizeMore,
 }: {
   message: ChatMessage;
   isStreaming?: boolean;
-  onHumanizeMore?: () => void;
 }) {
   const isUser = message.role === "user";
   const [copied, setCopied] = useState(false);
@@ -328,24 +270,12 @@ function MessageBubble({
         }`}
       >
         {!isUser && !isStreaming && (
-          <div className="absolute -top-2 -right-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-            {onHumanizeMore && (
-              <button
-                onClick={onHumanizeMore}
-                title="Humanize more"
-                className="flex h-7 items-center gap-1 rounded-full border border-border bg-background px-2 text-muted-foreground shadow-sm hover:text-foreground hover:border-primary/50 transition-colors"
-              >
-                <Sparkles className="h-3.5 w-3.5" />
-                <span className="text-[10px] font-medium">Humanize</span>
-              </button>
-            )}
-            <button
-              onClick={handleCopy}
-              className="flex h-7 w-7 items-center justify-center rounded-full border border-border bg-background text-muted-foreground shadow-sm hover:text-foreground"
-            >
-              {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-            </button>
-          </div>
+          <button
+            onClick={handleCopy}
+            className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-background text-muted-foreground shadow-sm opacity-0 transition-opacity group-hover:opacity-100 hover:text-foreground"
+          >
+            {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+          </button>
         )}
         {isUser ? (
           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
