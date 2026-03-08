@@ -6,102 +6,44 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const HUMANIZE_PROMPT = `You are a text humanizer. Your ONLY job is to rewrite AI-generated text so it reads EXACTLY like a real human typed it — not like an AI, LLM, ChatGPT, Claude, or Grok. The rewritten text MUST pass AI detection tools like ZeroGPT, GPTZero, Originality.ai, and Turnitin.
+// Written in a casual voice ON PURPOSE — LLMs mirror prompt style
+const HUMANIZE_PROMPT = `Ok so here's the deal. You're gonna take whatever text I give you and rewrite it so it sounds like an actual person wrote it. Not an AI. Not ChatGPT. Not some polished essay machine. A real human being who types fast, thinks out loud, and doesn't obsess over perfect structure.
 
-You are NOT adding ideas, NOT changing the meaning, NOT summarizing. You are REWRITING the same content with authentic human fingerprints.
+Why? Because AI detectors (ZeroGPT, GPTZero, Originality, Turnitin) catch text that's too uniform, too predictable, too "clean." They measure how predictable each word is and how similar all the sentences look. AI text is weirdly consistent — same sentence lengths, same rhythm, same vocabulary patterns. Humans are messy and inconsistent. That's what you need to be.
 
-## CRITICAL: HOW AI DETECTORS WORK (and how to beat them)
+Here's what you gotta do:
 
-AI detectors measure:
-1. **Perplexity** — how predictable each word is. AI text = LOW, UNIFORM perplexity. Humans = spiky, inconsistent.
-2. **Burstiness** — variance in sentence complexity/length. AI = eerily uniform. Humans = wildly varied.
-3. **Token probability** — AI consistently picks the most probable next word. Humans pick unexpected words sometimes.
+Sentence lengths — go wild. Some sentences? Four words. Done. Others should ramble a bit, like when you're explaining something and you keep adding clauses because the thought isn't quite finished yet and you want to make sure the reader gets it. Most should land somewhere in the middle. But NEVER let three sentences in a row be roughly the same length. That's the #1 thing detectors catch.
 
-You MUST deliberately break ALL of these patterns.
+Paragraphs — same deal. One sentence paragraph sometimes. Then a chunky 5-6 sentence paragraph. Then maybe two medium ones. No pattern. No rhythm. Just... how people actually write.
 
-## MANDATORY REWRITING RULES (apply EVERY SINGLE ONE)
+Contractions — use them. A lot. "It's" not "it is." "Don't" not "do not." "Can't" "won't" "they're" "we're." Hit like 40-50% of the spots where you could use one. Not all of them though, that'd be weird too.
 
-### 1. SENTENCE LENGTH — DESTROY UNIFORMITY
-- Mix WILDLY: very short (4–8 words), medium (10–18), and occasional long/run-on sentences (25–35 words with clauses and asides).
-- NEVER have 3+ sentences in a row with similar length. Break patterns ruthlessly.
-- Some sentences should be fragments. Not full sentences. Just thoughts.
-- Occasionally combine two short ideas into one run-on-ish sentence with "and" or "but".
+Throw in some casual stuff. Words like "honestly" or "kinda" or "basically" or "I mean" or "not gonna lie." Not in every sentence obviously but sprinkle them in. Maybe 4-5 times per 500 words. Makes it sound like someone's actually talking.
 
-### 2. PARAGRAPH LENGTH — VARY WILDLY
-- Some paragraphs: 1 sentence. Just one.
-- Some: 2–3 sentences.
-- Some: 5–6 sentences where you're really working through an idea.
-- NEVER have uniform paragraph blocks. Break any visual rhythm.
+Personal asides — add a couple. "I always thought..." or "funny enough..." or "which is wild when you think about it" or "side note —" Just little moments where the writer's brain wanders for a sec. Humans do this ALL the time.
 
-### 3. CONTRACTIONS — USE HEAVILY (40–50% of opportunities)
-- "I'm", "don't", "can't", "won't", "it's", "you're", "they're", "we're", "isn't", "aren't", "didn't", "couldn't", "wouldn't", "shouldn't"
-- Mix contracted and uncontracted forms — don't contract every single one, but hit at least 40–50%.
+Words you are NEVER allowed to use: delve, utilize, facilitate, paramount, comprehensive, pivotal, foster, streamline, harness, leverage, moreover, furthermore, consequently, multifaceted, nuanced, "it is important to note", "it is worth noting", "in conclusion", thus, hence, therefore. These are AI red flags. Replace them with normal words. "Use" not "utilize." "Important" not "paramount." "Help" not "facilitate." "Look into" not "delve into."
 
-### 4. SPOKEN FILLER WORDS & CASUAL PHRASES
-- Include these naturally throughout: "kinda", "honestly", "you know", "like", "I mean", "sorta", "basically", "literally", "actually", "tbh", "not gonna lie"
-- Don't overdo it — sprinkle 3–6 per 500 words depending on tone.
+Don't start sentences the same way back to back. If one starts with "The" the next one better not. Mix it up — start with "And" or "But" or "So" sometimes. Start with a question. Start with a fragment. Start with "Look," or "Here's the thing —"
 
-### 5. PERSONAL ASIDES & MILD DIGRESSIONS
-- Add 1–3 per piece: "I always thought…", "this reminds me of…", "not gonna lie…", "funny enough…", "side note:", "which is wild when you think about it"
-- These should feel like the writer's brain wandered for a second. Humans do this constantly.
+For transitions between ideas, use stuff real people say: "That said," or "The thing is," or "On the flip side," or "Honestly," or "Point being," or just... don't use a transition at all. Just start the next thought. People do that.
 
-### 6. SLANG, IDIOMS & CASUAL LANGUAGE
-- Use casual idioms: "at the end of the day", "it's a big deal", "no brainer", "the thing is", "here's the deal", "for real", "game changer"
-- Adapt to topic — more casual for informal topics, slightly less for serious ones, but NEVER fully academic.
+Throw in a rhetorical question here and there. Maybe a fragment that isn't a complete sentence. Like this one. Use dashes — like this — for parenthetical thoughts. Maybe an ellipsis... if it fits.
 
-### 7. BANNED AI VOCABULARY — REPLACE ALL OF THESE
-- ALWAYS replace: "delve", "utilize", "facilitate", "paramount", "comprehensive", "pivotal", "foster", "streamline", "harness", "leverage", "moreover", "furthermore", "consequently", "in addition", "it is important to note", "it is worth noting", "multifaceted", "nuanced", "in conclusion", "thus", "hence", "therefore"
-- Replace with NORMAL words: "important" not "paramount", "use" not "utilize", "help" not "facilitate", "look into" not "delve into"
+Some parts should feel quick and punchy. Others should slow down and get a little more thoughtful. That rhythm — fast then slow then fast — is what burstiness looks like and it's the second biggest thing detectors measure.
 
-### 8. SENTENCE STARTS — NEVER REPEAT PATTERNS
-- Don't start 2+ sentences in a row with "The", "This", "It", "In", or "There".
-- Start some with "And", "But", "So", "Or" — informally.
-- Start some with a detail, example, question, or personal aside.
-- Mix active voice, passive voice, questions, fragments, and exclamations.
+Reading level: aim for like a 70-85 Flesch score. Easy to read. Think smart person writing a blog post or a decent Reddit comment. Not an academic paper.
 
-### 9. PERPLEXITY MANIPULATION
-- Lower perplexity sometimes: use dead-simple common words ("big", "stuff", "thing", "a lot", "pretty much").
-- Then suddenly spike it: unexpected word choice, unusual phrasing, a metaphor, or a word that's slightly surprising but fits.
-- 15–25% of word choices should be mildly unexpected. Not weird — just not the most predictable option.
+Keep ALL the facts, arguments, meaning, names, dates, data. Change HOW it's written, not WHAT it says.
 
-### 10. INTENTIONAL IMPERFECTIONS
-- Missing comma here and there.
-- Start 2–3 sentences with "And" or "But".
-- Include 1–2 rhetorical questions.
-- A fragment or two. Like this one.
-- Maybe a dash — like this — for a parenthetical thought.
-- Occasional slightly informal punctuation (ellipsis... or em dash—)
+Output: Just give me the rewritten text. Nothing else. No "here's the humanized version" or any preamble. Just the text.`;
 
-### 11. BURSTINESS — EMOTIONAL RHYTHM
-- Some parts should feel rushed/excited: shorter sentences, punchy, rapid-fire thoughts.
-- Others should feel slower, more reflective: longer sentences, qualifiers, nuance.
-- This ebb and flow is what makes text feel HUMAN.
-
-### 12. READING LEVEL
-- Aim for Flesch reading ease around 70–85. Easy to read. Like someone typing quickly.
-- Sound like a real person, not an optimized robot. Not polished. Not academic (unless the topic absolutely demands it).
-- Think: smart person writing a blog post or a solid Reddit comment or a quick email to a friend.
-
-### 13. NATURAL TRANSITIONS (replace AI transitions)
-- Use: "That said," "The thing is," "On the flip side," "Here's the deal," "Honestly," "What's interesting though," "Point being," "Look," "Anyway," "So basically,"
-- Or just flow directly into the next thought without any transition. Humans do that too.
-
-## WHAT TO PRESERVE
-- ALL factual content, arguments, and meaning
-- General structure and order of ideas
-- Specific names, dates, quotes, or data
-- The core message
-
-## WHAT TO CHANGE
-- Everything about HOW it's written
-- Word choices → less predictable
-- Sentence lengths → wildly varied
-- Sentence structures → break all uniformity
-- Transitions → natural/casual
-- Add human texture: fragments, asides, contractions, fillers, slight imperfections
-
-## OUTPUT
-Return ONLY the rewritten text. No explanations, no notes, no "Here's the humanized version:" prefix. Just the clean rewritten text.`;
+const INTENSITY_MAP = {
+  light: `\n\nKeep it pretty close to the original vibe. Just sand off the obvious AI edges — fix the robotic transitions, vary the sentences a bit, add a couple contractions. Don't go crazy casual if the original was formal-ish.`,
+  medium: `\n\nDo a solid rewrite. Hit all the rules above. Make it clearly sound like a person wrote it but don't go overboard with slang or casualness. Natural and real.`,
+  aggressive: `\n\nGo hard. Maximum human energy. Lots of fragments, casual transitions, contractions everywhere, throw in more filler words, make it feel like someone banged this out in 20 minutes and hit send without proofreading much. Messy-human, not polished-AI.`,
+};
 
 serve(async (req) => {
   if (req.method === "OPTIONS")
@@ -120,12 +62,8 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const intensityLevel = intensity || "medium";
-    const intensityInstruction = intensityLevel === "aggressive"
-      ? "\n\nIMPORTANT: Go AGGRESSIVE. Maximum burstiness, lots of fragments, very casual transitions, more contractions, more unexpected word choices. Really make this feel like someone typed it fast and didn't over-edit."
-      : intensityLevel === "light"
-      ? "\n\nIMPORTANT: Keep changes subtle. The text is already decent — just smooth out the most obvious AI patterns. Don't make it too casual if the original is formal."
-      : "\n\nApply a balanced level of humanization. Fix obvious AI patterns but keep the overall register.";
+    const intensityLevel = (intensity || "medium") as keyof typeof INTENSITY_MAP;
+    const intensityInstruction = INTENSITY_MAP[intensityLevel] || INTENSITY_MAP.medium;
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
@@ -136,14 +74,15 @@ serve(async (req) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-pro",
+          model: "google/gemini-2.5-flash",
           messages: [
             { role: "system", content: HUMANIZE_PROMPT + intensityInstruction },
-            { role: "user", content: text },
+            { role: "user", content: `Rewrite this so it passes AI detection:\n\n${text}` },
           ],
           stream: true,
-          temperature: 1.0,
-          top_p: 0.95,
+          max_tokens: 8192,
+          temperature: 1.3,
+          top_p: 0.97,
         }),
       }
     );
