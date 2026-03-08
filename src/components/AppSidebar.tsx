@@ -16,6 +16,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useQuizAnswers } from "@/hooks/useQuizAnswers";
 import type { ChatSession } from "@/hooks/useChatHistory";
 import { ToneSliders, type ToneSettings } from "@/components/ToneSliders";
 
