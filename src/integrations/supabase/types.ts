@@ -130,6 +130,7 @@ export type Database = {
           display_name: string
           id: string
           last_daily_grant: string
+          last_monthly_grant: string
           onboarding_complete: boolean
           plan: string
           updated_at: string
@@ -143,6 +144,7 @@ export type Database = {
           display_name?: string
           id?: string
           last_daily_grant?: string
+          last_monthly_grant?: string
           onboarding_complete?: boolean
           plan?: string
           updated_at?: string
@@ -156,6 +158,7 @@ export type Database = {
           display_name?: string
           id?: string
           last_daily_grant?: string
+          last_monthly_grant?: string
           onboarding_complete?: boolean
           plan?: string
           updated_at?: string
