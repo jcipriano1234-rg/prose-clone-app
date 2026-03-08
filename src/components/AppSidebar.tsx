@@ -63,6 +63,7 @@ export function AppSidebar({
   const [newSampleText, setNewSampleText] = useState("");
   const { signOut } = useAuth();
   const navigate = useNavigate();
+  const { hasExistingAnswers } = useQuizAnswers();
   const [samplesOpen, setSamplesOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(true);
   const [toneOpen, setToneOpen] = useState(false);
