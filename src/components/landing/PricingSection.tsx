@@ -109,6 +109,9 @@ export default function PricingSection() {
             </motion.div>
           ))}
         </div>
+        <p className="text-center text-sm text-muted-foreground mt-8">
+          {creditCosts}
+        </p>
       </div>
     </section>
   );
