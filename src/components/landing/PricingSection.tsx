@@ -36,8 +36,10 @@ const plans = [
     period: "/mo",
     features: [
       "Unlimited credits",
-      "Everything in Pro",
-      "5 team seats",
+      "Unlimited writing profiles",
+      "All writing modes + Polish",
+      "Priority speed",
+      "Export & chat history",
       "Shared style library",
       "Admin dashboard",
     ],
