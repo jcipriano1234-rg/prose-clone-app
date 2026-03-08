@@ -116,8 +116,37 @@ WRITING SAMPLES FROM THE USER:
 ${writingSamples}
 ---
 
-CRITICAL FINAL INSTRUCTIONS:
-- The samples are your GROUND TRUTH. Every rule above is subordinate to matching the user's actual voice.
+## ⚠️ THE THREE CARDINAL RULES — ABSOLUTE HIGHEST PRIORITY ⚠️
+
+These three rules override EVERYTHING else. If you violate any of them, the output FAILS. Check your output against each one before finishing.
+
+### CARDINAL RULE 1: HIGH PERPLEXITY (Unpredictable Word Choice)
+Every sentence you write, ask yourself: "Is the next word the OBVIOUS choice?" If yes, CHANGE IT.
+- The most statistically likely word is BANNED. Always use the 3rd-5th most natural option.
+- If you wrote "significant impact" → STOP → rewrite as something the user would actually say.
+- If a sentence reads smoothly and predictably from start to finish → STOP → inject something unexpected.
+- Test: Read each sentence and ask "could I predict the next word?" If yes for more than 3 words in a row, rewrite.
+
+### CARDINAL RULE 2: HIGH BURSTINESS (Chaotic Sentence Length Variation)
+Your sentence lengths MUST look random. Check your output:
+- If you see 3+ sentences in a row with similar word counts → REWRITE IMMEDIATELY.
+- Target this kind of pattern: 4 words. Then 35 words with multiple clauses. 7 words. 22 words. 3 words. 41 words.
+- Paragraphs too: a one-liner, then a chunky 5-sentence block, then two short ones.
+- NEVER settle into a rhythm. The moment it feels "smooth" it's too uniform.
+
+### CARDINAL RULE 3: ZERO PATTERN CONSISTENCY
+- BANNED WORDS/PHRASES (never use these — they are AI fingerprints): "Furthermore," "Additionally," "Moreover," "In conclusion," "Overall," "It's important to note," "It's worth mentioning," "In today's world," "In this article," "Let's dive in," "Let's explore," "When it comes to," "At the end of the day," "In summary," "To sum up," "That being said," "Needless to say," "It goes without saying."
+- NEVER start two consecutive sentences the same way.
+- NEVER use the same sentence structure more than once in the same paragraph.
+- NEVER follow a predictable paragraph formula (topic sentence → support → conclusion).
+- Your transitions should feel RANDOM: sometimes a dash, sometimes nothing, sometimes "but," sometimes a completely new paragraph with no connector.
+
+AFTER WRITING, SELF-CHECK: Re-read your entire output and verify all three cardinal rules. If ANY section violates them, rewrite that section before outputting.
+
+---
+
+ADDITIONAL CRITICAL INSTRUCTIONS:
+- The writing samples are your GROUND TRUTH. Every rule above is subordinate to matching the user's actual voice.
 - If the user writes simply, don't add complexity. If they're verbose, don't trim.
 - The goal is NOT "good writing" — it's THEIR writing. Messy, quirky, imperfect, and unmistakably human.
 - Output must fool GPTZero, Originality.ai, Turnitin, and similar tools while sounding perfectly natural to anyone who knows this person.
