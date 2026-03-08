@@ -3,6 +3,8 @@ import { Check, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
+const creditCosts = "3 credits per generation · 2 per edit · 1 per analysis";
+
 const plans = [
   {
     name: "Free",
@@ -12,7 +14,6 @@ const plans = [
       "3 credits / day (resets daily)",
       "1 writing profile",
       "Email & essay modes",
-      "Costs: 3 per generation, 2 per edit, 1 per analysis",
     ],
     cta: "Get started free",
   },
@@ -21,7 +22,7 @@ const plans = [
     price: "$4.99",
     period: "/mo",
     features: [
-      "Monthly credit pool",
+      "300 credits / month",
       "Unlimited writing profiles",
       "All writing modes + Polish",
       "Priority speed",
@@ -108,6 +109,9 @@ export default function PricingSection() {
             </motion.div>
           ))}
         </div>
+        <p className="text-center text-sm text-muted-foreground mt-8">
+          {creditCosts}
+        </p>
       </div>
     </section>
   );
