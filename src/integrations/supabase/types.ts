@@ -73,6 +73,60 @@ export type Database = {
         }
         Relationships: []
       }
+      generation_logs: {
+        Row: {
+          created_at: string
+          id: string
+          mode: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mode?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mode?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          daily_limit: number
+          default_mode: string
+          display_name: string
+          id: string
+          onboarding_complete: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          daily_limit?: number
+          default_mode?: string
+          display_name?: string
+          id?: string
+          onboarding_complete?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          daily_limit?: number
+          default_mode?: string
+          display_name?: string
+          id?: string
+          onboarding_complete?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       quiz_answers: {
         Row: {
           answer: string
@@ -97,6 +151,57 @@ export type Database = {
           question_id?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      style_profiles: {
+        Row: {
+          analyzed_at: string
+          avg_sentence_length: number
+          avg_word_length: number
+          contraction_rate: number
+          created_at: string
+          formality_score: number
+          id: string
+          personality_traits: Json
+          punctuation_habits: Json
+          raw_analysis: string
+          top_phrases: Json
+          top_words: Json
+          user_id: string
+          vocabulary_richness: number
+        }
+        Insert: {
+          analyzed_at?: string
+          avg_sentence_length?: number
+          avg_word_length?: number
+          contraction_rate?: number
+          created_at?: string
+          formality_score?: number
+          id?: string
+          personality_traits?: Json
+          punctuation_habits?: Json
+          raw_analysis?: string
+          top_phrases?: Json
+          top_words?: Json
+          user_id: string
+          vocabulary_richness?: number
+        }
+        Update: {
+          analyzed_at?: string
+          avg_sentence_length?: number
+          avg_word_length?: number
+          contraction_rate?: number
+          created_at?: string
+          formality_score?: number
+          id?: string
+          personality_traits?: Json
+          punctuation_habits?: Json
+          raw_analysis?: string
+          top_phrases?: Json
+          top_words?: Json
+          user_id?: string
+          vocabulary_richness?: number
         }
         Relationships: []
       }
@@ -129,7 +234,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_daily_generation_count: {
+        Args: { p_user_id: string }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never
