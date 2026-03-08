@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send, PenLine, User, Copy, Check, ClipboardList } from "lucide-react";
+import { Send, PenLine, User, Copy, Check, ClipboardList, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { AppSidebar } from "@/components/AppSidebar";
 import { streamGhostWrite, ChatMessage } from "@/lib/stream-chat";
@@ -10,6 +10,8 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import ReactMarkdown from "react-markdown";
 import { useWritingSamples } from "@/hooks/useWritingSamples";
 import { useChatHistory } from "@/hooks/useChatHistory";
+import { useGenerationLimit } from "@/hooks/useGenerationLimit";
+import { useStyleProfile } from "@/hooks/useStyleProfile";
 import { defaultToneSettings, type ToneSettings } from "@/components/ToneSliders";
 import { TemplateLibrary } from "@/components/TemplateLibrary";
 
@@ -37,6 +39,8 @@ export default function Index() {
     sessions, activeSessionId, setActiveSessionId,
     loadSessionMessages, createSession, saveMessage, deleteSession, startNewSession,
   } = useChatHistory();
+  const { used, limit, remaining, isLimitReached, refetch: refetchLimit } = useGenerationLimit();
+  const { styleProfile, analyzing, analyzeStyle } = useStyleProfile();
   const [mode, setMode] = useState<Mode>("email");
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -50,7 +54,13 @@ export default function Index() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streamingContent]);
 
-  // Load messages when selecting a session
+  // Auto-analyze style when samples change and there are enough
+  useEffect(() => {
+    if (totalWordCount >= 50 && !styleProfile && !analyzing && allSamplesText.trim().length > 50) {
+      analyzeStyle(allSamplesText);
+    }
+  }, [totalWordCount, styleProfile, analyzing, allSamplesText, analyzeStyle]);
+
   const handleSelectSession = useCallback(async (sessionId: string) => {
     setActiveSessionId(sessionId);
     currentSessionRef.current = sessionId;
@@ -77,6 +87,10 @@ export default function Index() {
       toast.error("Tell me what to write!");
       return;
     }
+    if (isLimitReached) {
+      toast.error("Daily generation limit reached. Upgrade to Pro for unlimited.");
+      return;
+    }
 
     const userMessage: ChatMessage = { role: "user", content: prompt.trim() };
     const updatedMessages = [...messages, userMessage];
@@ -85,7 +99,6 @@ export default function Index() {
     setStreamingContent("");
     setIsStreaming(true);
 
-    // Create or reuse session
     let sessionId = currentSessionRef.current;
     if (!sessionId) {
       sessionId = await createSession(mode, prompt.trim());
@@ -97,7 +110,6 @@ export default function Index() {
       currentSessionRef.current = sessionId;
     }
 
-    // Save user message
     await saveMessage(sessionId, "user", prompt.trim());
 
     let accumulated = "";
@@ -107,6 +119,7 @@ export default function Index() {
       prompt: prompt.trim(),
       history: messages,
       tone: toneSettings,
+      styleProfile: styleProfile || undefined,
       onDelta: (chunk) => {
         accumulated += chunk;
         setStreamingContent(accumulated);
@@ -115,10 +128,11 @@ export default function Index() {
         setMessages((prev) => [...prev, { role: "assistant", content: accumulated }]);
         setStreamingContent("");
         setIsStreaming(false);
-        // Save assistant message
         if (currentSessionRef.current) {
           await saveMessage(currentSessionRef.current, "assistant", accumulated);
         }
+        // Refresh generation count
+        refetchLimit();
       },
       onError: (err) => {
         setIsStreaming(false);
@@ -126,7 +140,7 @@ export default function Index() {
         toast.error(err);
       },
     });
-  }, [samples, allSamplesText, mode, prompt, messages, createSession, saveMessage]);
+  }, [samples, allSamplesText, mode, prompt, messages, createSession, saveMessage, isLimitReached, toneSettings, styleProfile, refetchLimit]);
 
   const handleNewSession = () => {
     setPrompt("");
@@ -156,13 +170,31 @@ export default function Index() {
         />
 
         <div className="flex-1 flex flex-col min-w-0">
-          <header className="h-12 flex items-center gap-3 border-b border-border bg-card/50 backdrop-blur-sm px-4">
-            <SidebarTrigger />
-            <span className="text-sm font-medium text-foreground">{modeLabels[mode]}</span>
+          <header className="h-12 flex items-center justify-between border-b border-border bg-card/50 backdrop-blur-sm px-4">
+            <div className="flex items-center gap-3">
+              <SidebarTrigger />
+              <span className="text-sm font-medium text-foreground">{modeLabels[mode]}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              {styleProfile && (
+                <span className="text-[10px] rounded-full bg-primary/10 text-primary px-2 py-0.5 font-medium">
+                  Style Analyzed ✓
+                </span>
+              )}
+              <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
+                isLimitReached
+                  ? "bg-destructive/10 text-destructive"
+                  : remaining <= 2
+                  ? "bg-primary/10 text-primary"
+                  : "bg-muted text-muted-foreground"
+              }`}>
+                <Zap className="h-3 w-3" />
+                {remaining}/{limit} left today
+              </div>
+            </div>
           </header>
 
           <main className="flex-1 flex flex-col">
-            {/* Messages area */}
             <div className="flex-1 overflow-y-auto p-6">
               {messages.length === 0 && !isStreaming ? (
                 <div className="flex h-full items-center justify-center">
@@ -223,12 +255,15 @@ export default function Index() {
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     placeholder={
-                      messages.length > 0
+                      isLimitReached
+                        ? "Daily limit reached — upgrade to Pro for unlimited"
+                        : messages.length > 0
                         ? "Ask for changes… e.g. 'Make it shorter' or 'More professional tone'"
                         : placeholders[mode]
                     }
                     rows={3}
-                    className="w-full resize-none rounded-xl border border-border bg-background p-4 pr-14 font-sans text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                    disabled={isLimitReached}
+                    className="w-full resize-none rounded-xl border border-border bg-background p-4 pr-14 font-sans text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
                         e.preventDefault();
@@ -238,7 +273,7 @@ export default function Index() {
                   />
                   <button
                     onClick={handleGenerate}
-                    disabled={isStreaming}
+                    disabled={isStreaming || isLimitReached}
                     className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-soft transition-all hover:opacity-90 disabled:opacity-50"
                   >
                     <Send className="h-4 w-4" />

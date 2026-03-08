@@ -17,6 +17,7 @@ export async function streamGhostWrite({
   prompt,
   history,
   tone,
+  styleProfile,
   onDelta,
   onDone,
   onError,
@@ -26,6 +27,7 @@ export async function streamGhostWrite({
   prompt: string;
   history?: ChatMessage[];
   tone?: ToneSettings;
+  styleProfile?: unknown;
   onDelta: (text: string) => void;
   onDone: () => void;
   onError: (error: string) => void;
@@ -37,7 +39,7 @@ export async function streamGhostWrite({
         "Content-Type": "application/json",
         Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
       },
-      body: JSON.stringify({ writingSamples, mode, prompt, history: history || [], tone: tone || { formality: 30, length: 50, creativity: 50 } }),
+      body: JSON.stringify({ writingSamples, mode, prompt, history: history || [], tone: tone || { formality: 30, length: 50, creativity: 50 }, styleProfile: styleProfile || null }),
     });
 
     if (!resp.ok) {
