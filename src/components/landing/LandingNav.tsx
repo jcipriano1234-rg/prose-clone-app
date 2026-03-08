@@ -7,17 +7,20 @@ export default function LandingNav() {
 
   return (
     <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-background/80 border-b border-border">
-      <div className="max-w-6xl mx-auto flex items-center justify-between h-14 px-6">
+      <div className="max-w-6xl mx-auto flex items-center justify-between h-14 px-4 sm:px-6">
         <div className="flex items-center gap-2">
           <PenLine className="h-5 w-5 text-primary" />
           <span className="font-serif text-lg font-semibold">GhostInk</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Button variant="ghost" size="sm" onClick={() => navigate("/auth")}>
             Sign in
           </Button>
-          <Button size="sm" onClick={() => navigate("/auth")}>
+          <Button size="sm" onClick={() => navigate("/auth")} className="hidden sm:inline-flex">
             Get started <ArrowRight className="ml-1 h-3.5 w-3.5" />
+          </Button>
+          <Button size="sm" onClick={() => navigate("/auth")} className="sm:hidden">
+            Start <ArrowRight className="ml-1 h-3.5 w-3.5" />
           </Button>
         </div>
       </div>
