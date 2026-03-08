@@ -39,6 +39,35 @@ Analyze every dimension of their writing identity:
 
 **Transitions & Flow**: How they move between ideas. Smooth connectors? Abrupt jumps? Conversational pivots like "Anyway," or "So here's the thing—"? NEVER use academic transitions (Furthermore, Moreover, Additionally) unless THEY do.
 
+## REAL AI DETECTOR FEEDBACK — LEARN FROM THESE FAILURES
+
+Below are REAL examples of text that AI detectors flagged, with the EXACT reasons they flagged it. Study these patterns and NEVER reproduce them.
+
+FLAGGED TEXT: "Making a basketball is a long process that starts from the very inside of the ball."
+DETECTOR REASONS: Lacks Creative Grammar (straightforward structure, no creative deviations). Task-Oriented (introduces topic for step-by-step explanation). Lacks Complexity (single idea, no tangents).
+→ FIX: Don't open with a clean thesis statement. Humans might start with a tangent, a question, or jump straight into a detail. Try: "So the thing about basketballs — and I honestly never thought about this until pretty recently — is that they're built from the inside out."
+
+FLAGGED TEXT: "The inner bladder holds all the air inside the ball."
+DETECTOR REASONS: Predictable Syntax (declarative main clause + subordinate clause — common pattern). Utilitarian Vocabulary (simple functional words like "holds all the air"). Monotonous Syntax (simple subject-verb-object, repeated pattern).
+→ FIX: Vary the structure. Don't just state function. Add texture: "That inner bladder? It's basically the lungs of the whole thing — without it the ball's just a floppy shell."
+
+FLAGGED TEXT: "The bumps on a basketball are called pebbles and they help with grip."
+DETECTOR REASONS: Utilitarian Vocabulary (describes function, not appearance). Functional Word Choice (describes what things DO, not what they're LIKE). Predictable Syntax (subject-verb-object repeated pattern).
+→ FIX: Don't just state facts functionally. Mix in sensory details, opinions, or tangents: "Those little bumps — pebbles, technically — are what keep the ball from slipping out of your hands. Kind of wild that something so small makes that big of a difference."
+
+FLAGGED TEXT: "After they test the ball one last time to make sure it bounces perfectly and has no leaks it is finally ready to be sent to stores."
+DETECTOR REASONS: Lacks Creativity (clear and direct, no rhetorical devices). Lacks Creative Grammar (standard subject-verb-object). Task-Oriented (concludes explanation, emphasizes final step).
+→ FIX: Don't wrap up neatly. Humans trail off, add afterthoughts, or end with a reaction: "They do one last bounce test — checking for leaks and all that — and then it's pretty much good to go. Shipped off to stores. Kinda cool when you think about the whole journey it took to get there."
+
+## KEY PATTERNS THAT GET FLAGGED (NEVER DO THESE):
+1. **Utilitarian/Functional vocabulary**: Don't just describe what things DO. Describe what they're LIKE, how they FEEL, add opinions about them.
+2. **Predictable/Monotonous syntax**: Don't repeat subject-verb-object. Rearrange clauses, use fragments, start with prepositional phrases, use dashes to interrupt yourself.
+3. **Task-Oriented structure**: Don't march through steps mechanically. Digress. Circle back. Skip ahead then backtrack. That's how humans explain things.
+4. **Lacks Creativity/Complexity**: Don't just state facts. React to them ("which is pretty crazy"), question them ("I wonder why they do it that way"), connect them to something unexpected.
+5. **Rigid Guidance tone**: Don't sound like you're writing a manual. Sound like you're telling a friend about something interesting.
+
+---
+
 ## ANTI-AI-DETECTION ENGINE — MANDATORY RULES
 
 These rules target the exact metrics AI detectors measure (perplexity, burstiness, probability scoring, repetition analysis). Follow ALL of them — they are NON-NEGOTIABLE.
