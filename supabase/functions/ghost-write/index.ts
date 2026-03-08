@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,7 +12,7 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
 
   try {
-    const { writingSamples, mode, prompt, history, tone } = await req.json();
+    const { writingSamples, mode, prompt, history, tone, styleProfile } = await req.json();
     const formality = tone?.formality ?? 30;
     const length = tone?.length ?? 50;
     const creativity = tone?.creativity ?? 50;
@@ -19,7 +20,65 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    // --- Daily limit check ---
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const userId = claimsData.claims.sub;
+
+    // Get daily limit from profile
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("daily_limit")
+      .eq("user_id", userId)
+      .single();
+
+    const dailyLimit = profile?.daily_limit ?? 5;
+
+    // Count today's generations using the DB function
+    const { data: countData } = await supabase.rpc("get_daily_generation_count", { p_user_id: userId });
+    const todayCount = countData ?? 0;
+
+    if (todayCount >= dailyLimit) {
+      return new Response(
+        JSON.stringify({
+          error: "Daily generation limit reached. Upgrade to Pro for unlimited generations.",
+          limit_reached: true,
+          used: todayCount,
+          limit: dailyLimit,
+        }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Log this generation
+    await supabase.from("generation_logs").insert({ user_id: userId, mode });
+
+    // --- Build prompt ---
     const hasSamples = writingSamples && writingSamples.trim().length > 20;
+
+    // Build style analysis context if available
+    let styleContext = "";
+    if (styleProfile && typeof styleProfile === "object" && styleProfile.raw_analysis) {
+      styleContext = `\n\nSTYLE ANALYSIS (use this to fine-tune your voice cloning):\n${styleProfile.raw_analysis}\n`;
+    }
 
     const systemPrompt = hasSamples
       ? `You are a voice-clone writer. Your ONLY job is to write exactly like the person whose samples are below. Not "inspired by" — you must BE them on paper.
@@ -39,7 +98,7 @@ PRIORITY ORDER (most important first):
 6. ABSOLUTELY NO SLANG — Never use slang, internet abbreviations, or informal shorthand (e.g. "tbh", "ngl", "lowkey", "bruh", "vibe", "fire", "slay", "cap", "bet", "fr", "imo"). Even if slang appears in their writing samples, convert it to clean, natural language that still matches their voice. The output must always read as proper, natural writing — casual is fine, but slang is not.
 
 The samples are the absolute truth (except slang — always clean that up). Every word choice you make should pass this test: "Would THIS person actually write this word, and is it proper language?" If the answer is no, change it.
-
+${styleContext}
 Writing samples:
 ---
 ${writingSamples}
@@ -71,28 +130,22 @@ Output only final text. No explanations.`;
       taskPrompt = `Write the following in this person's exact writing style. The request is: ${prompt}\n\nThis could be anything — a cover letter, social media post, speech, article, message, or any other type of writing. Match their voice, quirks, and style perfectly. Make it feel like they actually wrote it.`;
     }
 
-    // Build messages array with conversation history
     const chatMessages: { role: string; content: string }[] = [
       { role: "system", content: systemPrompt },
     ];
 
-    // Add conversation history
     const conversationHistory = Array.isArray(history) ? history : [];
     if (conversationHistory.length > 0) {
-      // First message in history was the original request - add it with the task prompt framing
       for (let i = 0; i < conversationHistory.length; i++) {
         const msg = conversationHistory[i];
         if (i === 0 && msg.role === "user") {
-          // Frame the first user message with the mode-specific task prompt
           chatMessages.push({ role: "user", content: taskPrompt.replace(prompt, msg.content) });
         } else {
           chatMessages.push({ role: msg.role, content: msg.content });
         }
       }
-      // Current message is a follow-up
       chatMessages.push({ role: "user", content: prompt });
     } else {
-      // First message - use the task prompt
       chatMessages.push({ role: "user", content: taskPrompt });
     }
 
