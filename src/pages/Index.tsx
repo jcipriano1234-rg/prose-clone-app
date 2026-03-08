@@ -38,6 +38,7 @@ export default function Index() {
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [toneSettings, setToneSettings] = useState<ToneSettings>(defaultToneSettings);
   const [streamingContent, setStreamingContent] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const currentSessionRef = useRef<string | null>(null);
@@ -102,6 +103,7 @@ export default function Index() {
       mode,
       prompt: prompt.trim(),
       history: messages,
+      tone: toneSettings,
       onDelta: (chunk) => {
         accumulated += chunk;
         setStreamingContent(accumulated);
@@ -146,6 +148,8 @@ export default function Index() {
           activeSessionId={activeSessionId}
           onSelectSession={handleSelectSession}
           onDeleteSession={deleteSession}
+          toneSettings={toneSettings}
+          onToneChange={setToneSettings}
         />
 
         <div className="flex-1 flex flex-col min-w-0">
