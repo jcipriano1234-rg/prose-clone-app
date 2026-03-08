@@ -67,12 +67,12 @@ export function WritingQuiz({ onComplete, onSkip, initialAnswers, isEditing }: W
   const current = quizQuestions[currentStep];
   const isLast = currentStep === quizQuestions.length - 1;
   const currentAnswer = answers[current.id] || "";
-  const canProceed = currentAnswer.trim().length > 10;
-  const answeredCount = quizQuestions.filter((q) => (answers[q.id] || "").trim().length > 10).length;
+  const canProceed = currentAnswer.trim().split(/\s+/).filter(Boolean).length >= 10;
+  const answeredCount = quizQuestions.filter((q) => (answers[q.id] || "").trim().split(/\s+/).filter(Boolean).length >= 10).length;
 
   const handleNext = () => {
     if (!canProceed) {
-      toast.error("Write a bit more — we need at least a couple sentences to capture your style.");
+      toast.error("Write at least 10 words so we can capture your style.");
       return;
     }
     if (isLast) {
@@ -165,6 +165,19 @@ export function WritingQuiz({ onComplete, onSkip, initialAnswers, isEditing }: W
               className="w-full resize-none rounded-xl border border-border bg-background p-4 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               autoFocus
             />
+
+            {(() => {
+              const wordCount = currentAnswer.trim().split(/\s+/).filter(Boolean).length;
+              const remaining = 10 - wordCount;
+              if (remaining > 0 && currentAnswer.trim().length > 0) {
+                return (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {remaining} more word{remaining !== 1 ? "s" : ""} needed
+                  </p>
+                );
+              }
+              return null;
+            })()}
 
             <div className="flex items-center justify-between mt-4">
               <div className="flex items-center gap-2">
