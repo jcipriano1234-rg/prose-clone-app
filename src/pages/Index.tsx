@@ -41,7 +41,7 @@ export default function Index() {
   } = useChatHistory();
   const { balance, plan, isUnlimited, hasCredits, refetch: refetchCredits } = useCredits();
   const { styleProfile, analyzing, analyzeStyle } = useStyleProfile();
-  const [mode, setMode] = useState<Mode>("email");
+  const [mode, setMode] = useState<Mode>("freeform");
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
