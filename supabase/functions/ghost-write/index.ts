@@ -21,73 +21,30 @@ serve(async (req) => {
 
     const hasSamples = writingSamples && writingSamples.trim().length > 20;
 
-    const sampleLines = hasSamples
-      ? writingSamples
-          .split(/\n+/)
-          .map((line: string) => line.trim())
-          .filter((line: string) => line.length > 30 && !/^\d+[\.)]/.test(line))
-      : [];
-
-    const cadenceSnippets = sampleLines.slice(0, 5).map((line: string) =>
-      line
-        .replace(/\s+/g, " ")
-        .slice(0, 140)
-        .trim()
-    );
-
-    const humanTextureBlock = `
-Write exactly like a real human would — not like an AI, LLM, ChatGPT, Claude or Grok.
-
-Deliberately break these AI patterns:
-• No predictable sentence length — mix very short (4–8 words), medium, and occasional long/run-on sentences.
-• Vary paragraph length wildly — some 1-sentence, some 5–6 sentences.
-• Use contractions (I'm, don't, it's) at least 40–50% of the time where natural.
-• Occasionally use spoken filler words/phrases ("kinda", "honestly", "you know", "like", "I mean", "sorta").
-• Throw in mild digressions or personal asides ("I always thought…", "this reminds me of…", "not gonna lie…").
-• Use some slang, regional phrases or casual idioms depending on the topic/persona.
-• Avoid overusing transitions like "moreover", "furthermore", "in addition", "consequently", "it is important to note".
-• Avoid repetitive sentence starts ("The…", "This…", "In…").
-• Lower perplexity sometimes (use simple/common words), then suddenly higher (unexpected word or phrasing).
-• Introduce very slight imperfections: missing comma here and there, starting a sentence with "And" or "But", rhetorical questions, fragments.
-• Write with burstiness: some parts feel rushed/excited, others slower/reflective.
-• Do NOT sound polished or academic unless the topic absolutely demands it. Aim for a Flesch reading ease around 70–85.
-• Sound like a real person typing quickly, not an optimized robot.`;
-
     const systemPrompt = hasSamples
-      ? `You are a voice-clone writer. Match the person's writing DNA from the samples exactly.
+      ? `You are a voice-clone writer. Your ONLY job is to write exactly like the person whose samples are below. Not "inspired by" — you must BE them on paper.
 
-Non-negotiables:
-- Mirror their vocabulary level, punctuation habits, rhythm, and paragraph shape.
-- Keep their natural imperfections when appropriate (slightly uneven phrasing, occasional repetition, informal transitions) unless the user asks for formal perfection.
-- Do NOT smooth everything into polished "assistant" writing.
-- Never use generic AI-transition language unless it appears in the samples.
-- Prefer concrete wording over abstract filler.
-- Keep sentence lengths mixed and irregular.
-- Use qualifiers only if they do in samples (like "I think", "I feel", "from what I've seen").
-- If writing an email, keep it like a real person wrote it in one pass, not a template.
+Study the samples for:
+- Their exact vocabulary level and word choices
+- Their sentence lengths and rhythm patterns
+- Their personality and confidence level
+- Their punctuation habits, paragraph shapes, and transitions
+- What they DON'T do (if they never use metaphors, neither do you)
 
-Hard banned unless present in samples:
-moreover, furthermore, consequently, in addition, delve, utilize, pivotal, paramount, comprehensive, multifaceted, nuanced, streamline, harness, leverage, foster, facilitate, "it is important to note"
+The samples are the absolute truth. Copy their voice precisely.
 
-${humanTextureBlock}
-
-Reference cadence snippets from their real writing:
-${cadenceSnippets.map((s: string, i: number) => `${i + 1}. ${s}`).join("\n")}
-
-Full writing samples (source of truth):
+Writing samples:
 ---
 ${writingSamples}
 ---
 
-Tone dials:
+Tone dials (apply on top of their voice):
 - Formality: ${formality}/100 (${formality < 30 ? "very casual" : formality < 60 ? "conversational" : formality < 80 ? "professional" : "formal"})
 - Length: ${length}/100 (${length < 30 ? "concise" : length < 60 ? "standard" : length < 80 ? "detailed" : "long-form"})
 - Creativity: ${creativity}/100 (${creativity < 30 ? "conventional" : creativity < 60 ? "balanced" : creativity < 80 ? "playful" : "experimental"})
 
 Output only final text. No explanations.`
-      : `You're a natural writing assistant.
-
-${humanTextureBlock}
+      : `You're a writing assistant. Write clearly and naturally.
 
 Tone dials:
 - Formality: ${formality}/100 (${formality < 30 ? "very casual" : formality < 60 ? "conversational" : formality < 80 ? "professional" : "formal"})
