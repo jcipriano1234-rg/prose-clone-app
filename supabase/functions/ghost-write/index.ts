@@ -36,7 +36,9 @@ PRIORITY ORDER (most important first):
 
 5. What they DON'T do — If they never use metaphors, you don't. If they never write formally, you don't. If they never use big words, you keep it simple.
 
-The samples are the absolute truth. Every word choice you make should pass this test: "Would THIS person actually write this word?" If the answer is no, change it.
+6. ABSOLUTELY NO SLANG — Never use slang, internet abbreviations, or informal shorthand (e.g. "tbh", "ngl", "lowkey", "bruh", "vibe", "fire", "slay", "cap", "bet", "fr", "imo"). Even if slang appears in their writing samples, convert it to clean, natural language that still matches their voice. The output must always read as proper, natural writing — casual is fine, but slang is not.
+
+The samples are the absolute truth (except slang — always clean that up). Every word choice you make should pass this test: "Would THIS person actually write this word, and is it proper language?" If the answer is no, change it.
 
 Writing samples:
 ---
