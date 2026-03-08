@@ -8,6 +8,9 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import ReactMarkdown from "react-markdown";
 import { useWritingSamples } from "@/hooks/useWritingSamples";
 import { useChatHistory } from "@/hooks/useChatHistory";
+import { defaultToneSettings, type ToneSettings } from "@/components/ToneSliders";
+import { TemplateLibrary } from "@/components/TemplateLibrary";
+import { AiDetectorScore } from "@/components/AiDetectorScore";
 
 type Mode = "email" | "essay" | "polish" | "freeform";
 
@@ -35,6 +38,7 @@ export default function Index() {
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [toneSettings, setToneSettings] = useState<ToneSettings>(defaultToneSettings);
   const [streamingContent, setStreamingContent] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const currentSessionRef = useRef<string | null>(null);
@@ -99,6 +103,7 @@ export default function Index() {
       mode,
       prompt: prompt.trim(),
       history: messages,
+      tone: toneSettings,
       onDelta: (chunk) => {
         accumulated += chunk;
         setStreamingContent(accumulated);
@@ -143,6 +148,8 @@ export default function Index() {
           activeSessionId={activeSessionId}
           onSelectSession={handleSelectSession}
           onDeleteSession={deleteSession}
+          toneSettings={toneSettings}
+          onToneChange={setToneSettings}
         />
 
         <div className="flex-1 flex flex-col min-w-0">
@@ -167,11 +174,17 @@ export default function Index() {
                     <h2 className="font-serif text-xl font-semibold text-foreground mb-2">
                       What would you like me to write?
                     </h2>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground mb-4">
                       {totalWordCount > 0
                         ? `I've got ${totalWordCount} words across ${samples.length} sample${samples.length !== 1 ? "s" : ""}. Tell me what to write and I'll match your style.`
                         : "Start by adding writing samples in the sidebar, then tell me what to write."}
                     </p>
+                    {totalWordCount > 0 && (
+                      <div className="mt-4">
+                        <p className="text-xs text-muted-foreground mb-2">Quick templates:</p>
+                        <TemplateLibrary mode={mode} onSelectTemplate={setPrompt} />
+                      </div>
+                    )}
                   </motion.div>
                 </div>
               ) : (
@@ -280,12 +293,15 @@ function MessageBubble({
         {isUser ? (
           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
         ) : (
-          <div className="prose prose-sm max-w-none text-foreground prose-headings:font-serif prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-li:text-foreground">
-            <ReactMarkdown>{message.content}</ReactMarkdown>
-            {isStreaming && (
-              <span className="inline-block h-4 w-1.5 animate-pulse rounded-sm bg-primary" />
-            )}
-          </div>
+          <>
+            <div className="prose prose-sm max-w-none text-foreground prose-headings:font-serif prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-li:text-foreground">
+              <ReactMarkdown>{message.content}</ReactMarkdown>
+              {isStreaming && (
+                <span className="inline-block h-4 w-1.5 animate-pulse rounded-sm bg-primary" />
+              )}
+            </div>
+            {!isStreaming && <AiDetectorScore content={message.content} />}
+          </>
         )}
       </div>
     </motion.div>

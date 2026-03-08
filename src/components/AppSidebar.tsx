@@ -1,4 +1,4 @@
-import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2, LogOut, MessageSquare } from "lucide-react";
+import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2, LogOut, MessageSquare, SlidersHorizontal } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -16,6 +16,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import type { ChatSession } from "@/hooks/useChatHistory";
+import { ToneSliders, type ToneSettings } from "@/components/ToneSliders";
 
 type Mode = "email" | "essay" | "polish" | "freeform";
 
@@ -38,6 +39,8 @@ interface AppSidebarProps {
   activeSessionId: string | null;
   onSelectSession: (id: string) => void;
   onDeleteSession: (id: string) => void;
+  toneSettings: ToneSettings;
+  onToneChange: (settings: ToneSettings) => void;
 }
 
 const modes = [
@@ -51,6 +54,7 @@ export function AppSidebar({
   mode, onModeChange, onNewSession,
   samples, onAddSample, onRemoveSample, totalWordCount,
   chatSessions, activeSessionId, onSelectSession, onDeleteSession,
+  toneSettings, onToneChange,
 }: AppSidebarProps) {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
@@ -58,6 +62,7 @@ export function AppSidebar({
   const { signOut } = useAuth();
   const [samplesOpen, setSamplesOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(true);
+  const [toneOpen, setToneOpen] = useState(false);
 
   const handleSubmitSample = () => {
     if (newSampleText.trim()) {
@@ -129,7 +134,29 @@ export function AppSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Chat History */}
+        {/* Tone Controls */}
+        {!collapsed && (
+          <SidebarGroup>
+            <Collapsible open={toneOpen} onOpenChange={setToneOpen}>
+              <CollapsibleTrigger className="w-full">
+                <SidebarGroupLabel className="text-[11px] uppercase tracking-wider text-muted-foreground flex items-center justify-between w-full cursor-pointer hover:text-foreground transition-colors">
+                  <span className="flex items-center gap-1.5">
+                    <SlidersHorizontal className="h-3.5 w-3.5" />
+                    Tone Controls
+                  </span>
+                  <ChevronDown className={`h-3.5 w-3.5 transition-transform ${toneOpen ? "rotate-180" : ""}`} />
+                </SidebarGroupLabel>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarGroupContent className="mt-2 px-1">
+                  <ToneSliders settings={toneSettings} onChange={onToneChange} />
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </Collapsible>
+          </SidebarGroup>
+        )}
+
+
         {!collapsed && (
           <SidebarGroup>
             <Collapsible open={historyOpen} onOpenChange={setHistoryOpen}>

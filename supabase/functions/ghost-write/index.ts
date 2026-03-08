@@ -11,7 +11,10 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
 
   try {
-    const { writingSamples, mode, prompt, history } = await req.json();
+    const { writingSamples, mode, prompt, history, tone } = await req.json();
+    const formality = tone?.formality ?? 30;
+    const length = tone?.length ?? 50;
+    const creativity = tone?.creativity ?? 50;
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
@@ -97,6 +100,11 @@ CRITICAL: Step 2 (human texture) is the baseline. Step 3 (their style) ALWAYS wi
 ---
 ${writingSamples}
 ---
+
+## TONE CONTROLS (User-specified dials — apply these to the final output)
+- **Formality**: ${formality}/100 (${formality < 30 ? "Very casual, slang OK, like texting a friend" : formality < 60 ? "Conversational but coherent" : formality < 80 ? "Professional, polished" : "Formal/academic register"})
+- **Length**: ${length}/100 (${length < 30 ? "Ultra-concise, cut ruthlessly, shortest possible" : length < 60 ? "Normal length, don't pad" : length < 80 ? "Detailed, flesh out points" : "Comprehensive, thorough coverage"})
+- **Creativity**: ${creativity}/100 (${creativity < 30 ? "Stay safe, conventional, predictable phrasing" : creativity < 60 ? "Balanced, occasional surprise" : creativity < 80 ? "Playful, unexpected angles, vivid language" : "Wild, experimental, unconventional structure and word choices"})
 
 REMEMBER: You are not an AI trying to sound human. You are not trying to beat detectors. You are simply writing as this specific person writes. Their style IS the output. Nothing more, nothing less.
 
