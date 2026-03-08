@@ -176,8 +176,12 @@ export default function Index() {
         <div className="flex-1 flex flex-col min-w-0">
           <header className="h-12 flex items-center justify-between border-b border-border bg-card/50 backdrop-blur-sm px-3 sm:px-4 gap-2">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <SidebarTrigger className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-2 py-1.5 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0">
-                <Menu className="h-4 w-4 sm:hidden" />
+              {/* Desktop: simple trigger */}
+              <SidebarTrigger className="hidden sm:flex" />
+              {/* Mobile: prominent labeled button */}
+              <SidebarTrigger className="sm:hidden flex items-center gap-1.5 rounded-xl bg-primary text-primary-foreground px-3 py-1.5 text-xs font-medium shadow-soft hover:opacity-90 transition-all">
+                <Menu className="h-4 w-4" />
+                <span>Menu</span>
               </SidebarTrigger>
               <span className="text-sm font-medium text-foreground truncate">{modeLabels[mode]}</span>
             </div>
