@@ -3,6 +3,13 @@ import { Check, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
+const sharedFeatures = [
+  "All writing modes",
+  "Generation, editing & analysis",
+  "Style cloning & voice profiles",
+  "Export & chat history",
+];
+
 const creditCosts = "3 credits per generation · 2 per edit · 1 per analysis";
 
 const plans = [
@@ -10,40 +17,30 @@ const plans = [
     name: "Free",
     price: "$0",
     period: "",
-    features: [
-      "3 credits / day (resets daily)",
-      "1 writing profile",
-      "Email & essay modes",
-    ],
+    credit: "3 credits / day",
+    creditNote: "Resets daily",
+    extras: [],
     cta: "Get started free",
   },
   {
     name: "Pro",
     price: "$4.99",
     period: "/mo",
-    features: [
-      "300 credits / month",
-      "Unlimited writing profiles",
-      "All writing modes + Polish",
-      "Priority speed",
-      "Export & chat history",
-    ],
+    credit: "300 credits / month",
+    creditNote: "Resets monthly",
+    extras: ["Priority speed"],
     cta: "Start free trial",
   },
   {
     name: "Team",
     price: "$11.99",
     period: "/mo",
-    features: [
-      "Unlimited credits",
-      "Unlimited writing profiles",
-      "All writing modes + Polish",
-      "Priority speed",
-      "Export & chat history",
-      "Shared style library",
-      "Admin dashboard",
-    ],
+    credit: "Unlimited credits",
+    creditNote: "No limits",
+    extras: ["Priority speed", "Shared style library", "Admin dashboard"],
     cta: "Contact us",
+  },
+];
   },
 ];
 
