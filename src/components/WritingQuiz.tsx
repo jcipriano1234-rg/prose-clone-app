@@ -72,7 +72,7 @@ export function WritingQuiz({ onComplete, onSkip, initialAnswers, isEditing }: W
 
   const handleNext = () => {
     if (!canProceed) {
-      toast.error("Write a bit more — we need at least a couple sentences to capture your style.");
+      toast.error("Write at least 10 words so we can capture your style.");
       return;
     }
     if (isLast) {
