@@ -63,43 +63,46 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="h-14 flex items-center gap-3 border-b border-border bg-card/50 backdrop-blur-sm px-6">
+      <header className="h-14 flex items-center gap-3 border-b border-border bg-card/50 backdrop-blur-sm px-4 sm:px-6">
         <button
           onClick={() => navigate("/app")}
           className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to app
+          <span className="hidden sm:inline">Back to app</span>
+          <span className="sm:hidden">Back</span>
         </button>
       </header>
 
-      <main className="max-w-2xl mx-auto p-6 space-y-6">
+      <main className="max-w-2xl mx-auto p-4 sm:p-6 space-y-6">
         {/* Account Card */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           className="rounded-2xl border border-border bg-card p-6"
         >
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             {avatarUrl ? (
-              <img src={avatarUrl} alt="Avatar" className="h-14 w-14 rounded-full border-2 border-border" />
+              <img src={avatarUrl} alt="Avatar" className="h-14 w-14 rounded-full border-2 border-border shrink-0" />
             ) : (
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 shrink-0">
                 <User className="h-7 w-7 text-primary" />
               </div>
             )}
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 w-full">
               {editingName ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <input
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    className="text-lg font-semibold font-serif bg-background border border-border rounded-lg px-3 py-1 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="text-lg font-semibold font-serif bg-background border border-border rounded-lg px-3 py-1 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 w-full sm:w-auto"
                     autoFocus
                     onKeyDown={(e) => e.key === "Enter" && handleSaveName()}
                   />
-                  <button onClick={handleSaveName} className="text-xs text-primary font-medium hover:underline">Save</button>
-                  <button onClick={() => setEditingName(false)} className="text-xs text-muted-foreground hover:underline">Cancel</button>
+                  <div className="flex gap-2">
+                    <button onClick={handleSaveName} className="text-xs text-primary font-medium hover:underline">Save</button>
+                    <button onClick={() => setEditingName(false)} className="text-xs text-muted-foreground hover:underline">Cancel</button>
+                  </div>
                 </div>
               ) : (
                 <h2
@@ -112,7 +115,7 @@ export default function Profile() {
               )}
               <p className="text-sm text-muted-foreground truncate">{email}</p>
             </div>
-            <div className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${config.color}`}>
+            <div className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold shrink-0 ${config.color}`}>
               <config.icon className="h-3.5 w-3.5" />
               {config.label}
             </div>
@@ -138,7 +141,7 @@ export default function Profile() {
               {isUnlimited ? "Unlimited" : "credits remaining"}
             </span>
           </div>
-          <div className="mt-3 grid grid-cols-3 gap-3 text-center">
+          <div className="mt-3 grid grid-cols-3 gap-2 sm:gap-3 text-center">
             <div className="rounded-xl bg-background border border-border p-3">
               <p className="text-lg font-bold text-foreground">3</p>
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider">per generation</p>
@@ -168,7 +171,7 @@ export default function Profile() {
             <BarChart3 className="h-4 w-4 text-primary" />
             Usage Stats
           </h3>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-3 sm:gap-4">
             <div>
               <p className="text-2xl font-bold font-serif text-foreground">{totalGenerations}</p>
               <p className="text-xs text-muted-foreground">Total generations</p>

@@ -174,18 +174,18 @@ export default function Index() {
         />
 
         <div className="flex-1 flex flex-col min-w-0">
-          <header className="h-12 flex items-center justify-between border-b border-border bg-card/50 backdrop-blur-sm px-4">
-            <div className="flex items-center gap-3">
+          <header className="h-12 flex items-center justify-between border-b border-border bg-card/50 backdrop-blur-sm px-3 sm:px-4 gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <SidebarTrigger />
-              <span className="text-sm font-medium text-foreground">{modeLabels[mode]}</span>
+              <span className="text-sm font-medium text-foreground truncate">{modeLabels[mode]}</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               {styleProfile && (
-                <span className="text-[10px] rounded-full bg-primary/10 text-primary px-2 py-0.5 font-medium">
+                <span className="text-[10px] rounded-full bg-primary/10 text-primary px-2 py-0.5 font-medium hidden sm:inline-flex">
                   Style Analyzed ✓
                 </span>
               )}
-              <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
+              <div className={`flex items-center gap-1 sm:gap-1.5 rounded-full px-2 sm:px-3 py-1 text-xs font-medium ${
                 !hasCredits
                   ? "bg-destructive/10 text-destructive"
                   : balance <= 2 && !isUnlimited
@@ -193,13 +193,14 @@ export default function Index() {
                   : "bg-muted text-muted-foreground"
               }`}>
                 <Zap className="h-3 w-3" />
-                {isUnlimited ? "Unlimited" : `${balance} credits`}
+                {isUnlimited ? "∞" : balance}
+                <span className="hidden sm:inline"> credits</span>
               </div>
             </div>
           </header>
 
           <main className="flex-1 flex flex-col">
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6">
               {messages.length === 0 && !isStreaming ? (
                 <div className="flex h-full items-center justify-center">
                   <motion.div
@@ -252,7 +253,7 @@ export default function Index() {
             </div>
 
             {/* Input bar */}
-            <div className="border-t border-border bg-card/50 backdrop-blur-sm p-4">
+            <div className="border-t border-border bg-card/50 backdrop-blur-sm p-3 sm:p-4">
               <div className="max-w-3xl mx-auto">
                 <div className="relative">
                   <textarea
@@ -284,7 +285,8 @@ export default function Index() {
                   </button>
                 </div>
                 <p className="mt-1.5 text-[11px] text-muted-foreground">
-                  ⌘ + Enter to send
+                  <span className="hidden sm:inline">⌘ + Enter to send</span>
+                  <span className="sm:hidden">Tap send or ⌘+Enter</span>
                 </p>
               </div>
             </div>
