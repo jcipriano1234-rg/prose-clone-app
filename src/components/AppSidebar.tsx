@@ -1,4 +1,4 @@
-import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2, LogOut, MessageSquare, SlidersHorizontal, ClipboardList } from "lucide-react";
+import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2, LogOut, MessageSquare, SlidersHorizontal, ClipboardList, Pencil } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -16,6 +16,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useQuizAnswers } from "@/hooks/useQuizAnswers";
 import type { ChatSession } from "@/hooks/useChatHistory";
 import { ToneSliders, type ToneSettings } from "@/components/ToneSliders";
 
@@ -62,6 +63,7 @@ export function AppSidebar({
   const [newSampleText, setNewSampleText] = useState("");
   const { signOut } = useAuth();
   const navigate = useNavigate();
+  const { hasExistingAnswers } = useQuizAnswers();
   const [samplesOpen, setSamplesOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(true);
   const [toneOpen, setToneOpen] = useState(false);
@@ -108,8 +110,16 @@ export function AppSidebar({
                   onClick={() => navigate("/quiz")}
                   className="gap-3 rounded-lg border border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors"
                 >
-                  <ClipboardList className="h-4 w-4 text-primary" />
-                  {!collapsed && <span className="text-sm font-medium text-primary">Writing Quiz</span>}
+                  {hasExistingAnswers ? (
+                    <Pencil className="h-4 w-4 text-primary" />
+                  ) : (
+                    <ClipboardList className="h-4 w-4 text-primary" />
+                  )}
+                  {!collapsed && (
+                    <span className="text-sm font-medium text-primary">
+                      {hasExistingAnswers ? "Edit Quiz" : "Writing Quiz"}
+                    </span>
+                  )}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

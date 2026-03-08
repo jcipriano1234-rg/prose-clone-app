@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { PenLine, Shield, Zap, Eye, ArrowRight, Check } from "lucide-react";
+import { PenLine, Fingerprint, Zap, Lock, ArrowRight, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -14,19 +14,19 @@ const fadeUp = {
 
 const features = [
   {
-    icon: Eye,
-    title: "Undetectable by AI checkers",
-    desc: "Built to beat GPTZero, Turnitin, and every major detector. High perplexity, high burstiness — like a human wrote it.",
+    icon: Fingerprint,
+    title: "Clones your exact voice",
+    desc: "GhostInk learns your vocabulary, sentence rhythm, and personality quirks — then writes like you, not like a machine.",
   },
   {
     icon: Zap,
     title: "Learns your voice in seconds",
-    desc: "Paste a few writing samples and GhostInk mirrors your sentence structure, vocabulary, and quirks.",
+    desc: "Take a quick writing quiz or paste a few samples and GhostInk mirrors your tone, word choices, and style.",
   },
   {
-    icon: Shield,
+    icon: Lock,
     title: "Your style, your privacy",
-    desc: "Samples never leave your session. We don't store your writing. Period.",
+    desc: "Your writing samples stay private and secure. We use them only to match your voice.",
   },
 ];
 
@@ -101,8 +101,8 @@ export default function Landing() {
             custom={0}
             className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-medium text-primary mb-6"
           >
-            <Shield className="h-3.5 w-3.5" />
-            Beats every AI detector
+            <Fingerprint className="h-3.5 w-3.5" />
+            Your voice, perfectly cloned
           </motion.div>
 
           <motion.h1
@@ -124,9 +124,9 @@ export default function Landing() {
             custom={2}
             className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed"
           >
-            GhostInk clones your writing style so perfectly that no AI detector
-            can tell the difference. Paste your samples, describe what you need,
-            and get content that reads like <em>you</em> wrote it.
+            GhostInk clones your writing style so perfectly that every word
+            sounds like <em>you</em> wrote it. Take a quick quiz, describe what
+            you need, and get content in your exact voice.
           </motion.p>
 
           <motion.div
@@ -239,9 +239,9 @@ export default function Landing() {
             className="space-y-6"
           >
             <p className="font-serif text-2xl sm:text-3xl font-semibold leading-snug">
-              "I ran my GhostInk essay through 4 different detectors.{" "}
-              <span className="text-primary">All came back human.</span>{" "}
-              My professor literally said it was my best work."
+              "I used GhostInk for my college essays and{" "}
+              <span className="text-primary">my professor said it was my best writing yet.</span>{" "}
+              It genuinely sounds exactly like me."
             </p>
             <div className="text-sm text-muted-foreground">
               — College senior, English major
@@ -310,11 +310,11 @@ export default function Landing() {
       <section className="py-24 px-6">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="font-serif text-3xl sm:text-4xl font-bold mb-4">
-            Stop sounding like a robot.
+            Your words. Your voice. Effortless.
           </h2>
           <p className="text-muted-foreground mb-8">
-            Join thousands of writers who use GhostInk to create authentic,
-            undetectable content in their own voice.
+            Join thousands of writers who use GhostInk to create authentic
+            content in their own voice — faster than ever.
           </p>
           <Button
             size="lg"
