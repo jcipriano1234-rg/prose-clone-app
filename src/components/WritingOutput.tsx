@@ -36,9 +36,14 @@ export function WritingOutput({ content, isStreaming }: WritingOutputProps) {
       {content && (
         <button
           onClick={handleCopy}
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className={`absolute right-4 top-4 flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold shadow-md transition-all duration-200 active:scale-95 ${
+            copied
+              ? "bg-primary text-primary-foreground"
+              : "bg-primary text-primary-foreground hover:opacity-90"
+          }`}
         >
-          {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+          {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+          {copied ? "Copied!" : "Copy"}
         </button>
       )}
       <div className="prose prose-sm max-w-none font-sans text-foreground prose-headings:font-serif prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-li:text-foreground">
