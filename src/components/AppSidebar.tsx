@@ -103,6 +103,15 @@ export function AppSidebar({
                   {!collapsed && <span className="text-sm font-medium">New Session</span>}
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => navigate("/quiz")}
+                  className="gap-3 rounded-lg border border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors"
+                >
+                  <ClipboardList className="h-4 w-4 text-primary" />
+                  {!collapsed && <span className="text-sm font-medium text-primary">Writing Quiz</span>}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
