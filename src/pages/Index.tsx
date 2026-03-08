@@ -174,8 +174,17 @@ export default function Index() {
                     <h2 className="font-serif text-xl font-semibold text-foreground mb-2">
                       What would you like me to write?
                     </h2>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground mb-4">
                       {totalWordCount > 0
+                        ? `I've got ${totalWordCount} words across ${samples.length} sample${samples.length !== 1 ? "s" : ""}. Tell me what to write and I'll match your style.`
+                        : "Start by adding writing samples in the sidebar, then tell me what to write."}
+                    </p>
+                    {totalWordCount > 0 && (
+                      <div className="mt-4">
+                        <p className="text-xs text-muted-foreground mb-2">Quick templates:</p>
+                        <TemplateLibrary mode={mode} onSelectTemplate={setPrompt} />
+                      </div>
+                    )}
                         ? `I've got ${totalWordCount} words across ${samples.length} sample${samples.length !== 1 ? "s" : ""}. Tell me what to write and I'll match your style.`
                         : "Start by adding writing samples in the sidebar, then tell me what to write."}
                     </p>
@@ -293,6 +302,7 @@ function MessageBubble({
               <span className="inline-block h-4 w-1.5 animate-pulse rounded-sm bg-primary" />
             )}
           </div>
+          {!isStreaming && <AiDetectorScore content={message.content} />}
         )}
       </div>
     </motion.div>
