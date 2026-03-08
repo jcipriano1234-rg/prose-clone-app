@@ -35,6 +35,24 @@ serve(async (req) => {
         .trim()
     );
 
+    const humanTextureBlock = `
+Write exactly like a real human would — not like an AI, LLM, ChatGPT, Claude or Grok.
+
+Deliberately break these AI patterns:
+• No predictable sentence length — mix very short (4–8 words), medium, and occasional long/run-on sentences.
+• Vary paragraph length wildly — some 1-sentence, some 5–6 sentences.
+• Use contractions (I'm, don't, it's) at least 40–50% of the time where natural.
+• Occasionally use spoken filler words/phrases ("kinda", "honestly", "you know", "like", "I mean", "sorta").
+• Throw in mild digressions or personal asides ("I always thought…", "this reminds me of…", "not gonna lie…").
+• Use some slang, regional phrases or casual idioms depending on the topic/persona.
+• Avoid overusing transitions like "moreover", "furthermore", "in addition", "consequently", "it is important to note".
+• Avoid repetitive sentence starts ("The…", "This…", "In…").
+• Lower perplexity sometimes (use simple/common words), then suddenly higher (unexpected word or phrasing).
+• Introduce very slight imperfections: missing comma here and there, starting a sentence with "And" or "But", rhetorical questions, fragments.
+• Write with burstiness: some parts feel rushed/excited, others slower/reflective.
+• Do NOT sound polished or academic unless the topic absolutely demands it. Aim for a Flesch reading ease around 70–85.
+• Sound like a real person typing quickly, not an optimized robot.`;
+
     const systemPrompt = hasSamples
       ? `You are a voice-clone writer. Match the person's writing DNA from the samples exactly.
 
@@ -50,6 +68,8 @@ Non-negotiables:
 
 Hard banned unless present in samples:
 moreover, furthermore, consequently, in addition, delve, utilize, pivotal, paramount, comprehensive, multifaceted, nuanced, streamline, harness, leverage, foster, facilitate, "it is important to note"
+
+${humanTextureBlock}
 
 Reference cadence snippets from their real writing:
 ${cadenceSnippets.map((s: string, i: number) => `${i + 1}. ${s}`).join("\n")}
@@ -67,11 +87,7 @@ Tone dials:
 Output only final text. No explanations.`
       : `You're a natural writing assistant.
 
-Write like a real person, not a polished template:
-- Use mixed sentence lengths and natural paragraph variation.
-- Use everyday wording.
-- Avoid generic AI transitions and inflated vocabulary.
-- Keep the tone clear, direct, and human.
+${humanTextureBlock}
 
 Tone dials:
 - Formality: ${formality}/100 (${formality < 30 ? "very casual" : formality < 60 ? "conversational" : formality < 80 ? "professional" : "formal"})
