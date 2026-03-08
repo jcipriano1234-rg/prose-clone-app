@@ -10,7 +10,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import ReactMarkdown from "react-markdown";
 import { useWritingSamples } from "@/hooks/useWritingSamples";
 import { useChatHistory } from "@/hooks/useChatHistory";
-import { useGenerationLimit } from "@/hooks/useGenerationLimit";
+import { useCredits } from "@/hooks/useCredits";
 import { useStyleProfile } from "@/hooks/useStyleProfile";
 import { defaultToneSettings, type ToneSettings } from "@/components/ToneSliders";
 import { TemplateLibrary } from "@/components/TemplateLibrary";
@@ -39,7 +39,7 @@ export default function Index() {
     sessions, activeSessionId, setActiveSessionId,
     loadSessionMessages, createSession, saveMessage, deleteSession, startNewSession,
   } = useChatHistory();
-  const { used, limit, remaining, isLimitReached, refetch: refetchLimit } = useGenerationLimit();
+  const { balance, plan, isUnlimited, hasCredits, refetch: refetchCredits } = useCredits();
   const { styleProfile, analyzing, analyzeStyle } = useStyleProfile();
   const [mode, setMode] = useState<Mode>("email");
   const [prompt, setPrompt] = useState("");
@@ -87,10 +87,14 @@ export default function Index() {
       toast.error("Tell me what to write!");
       return;
     }
-    if (isLimitReached) {
-      toast.error("Daily generation limit reached. Upgrade to Pro for unlimited.");
+    if (!hasCredits) {
+      toast.error("Not enough credits. Upgrade your plan for more.");
       return;
     }
+
+    // Determine credit cost for display
+    const isFollowUp = messages.length > 0;
+    const creditCost = isFollowUp ? 2 : 3;
 
     const userMessage: ChatMessage = { role: "user", content: prompt.trim() };
     const updatedMessages = [...messages, userMessage];
@@ -132,7 +136,7 @@ export default function Index() {
           await saveMessage(currentSessionRef.current, "assistant", accumulated);
         }
         // Refresh generation count
-        refetchLimit();
+        refetchCredits();
       },
       onError: (err) => {
         setIsStreaming(false);
@@ -140,7 +144,7 @@ export default function Index() {
         toast.error(err);
       },
     });
-  }, [samples, allSamplesText, mode, prompt, messages, createSession, saveMessage, isLimitReached, toneSettings, styleProfile, refetchLimit]);
+  }, [samples, allSamplesText, mode, prompt, messages, createSession, saveMessage, hasCredits, toneSettings, styleProfile, refetchCredits]);
 
   const handleNewSession = () => {
     setPrompt("");
