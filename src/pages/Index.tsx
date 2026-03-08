@@ -186,14 +186,14 @@ export default function Index() {
                 </span>
               )}
               <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
-                isLimitReached
+                !hasCredits
                   ? "bg-destructive/10 text-destructive"
-                  : remaining <= 2
+                  : balance <= 2 && !isUnlimited
                   ? "bg-primary/10 text-primary"
                   : "bg-muted text-muted-foreground"
               }`}>
                 <Zap className="h-3 w-3" />
-                {remaining}/{limit} left today
+                {isUnlimited ? "Unlimited" : `${balance} credits`}
               </div>
             </div>
           </header>
@@ -259,14 +259,14 @@ export default function Index() {
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     placeholder={
-                      isLimitReached
-                        ? "Daily limit reached — upgrade to Pro for unlimited"
+                      !hasCredits
+                        ? "Out of credits — upgrade for more"
                         : messages.length > 0
-                        ? "Ask for changes… e.g. 'Make it shorter' or 'More professional tone'"
+                        ? `Ask for changes (2 credits)… e.g. 'Make it shorter'`
                         : placeholders[mode]
                     }
                     rows={3}
-                    disabled={isLimitReached}
+                    disabled={!hasCredits}
                     className="w-full resize-none rounded-xl border border-border bg-background p-4 pr-14 font-sans text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
@@ -277,7 +277,7 @@ export default function Index() {
                   />
                   <button
                     onClick={handleGenerate}
-                    disabled={isStreaming || isLimitReached}
+                    disabled={isStreaming || !hasCredits}
                     className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-soft transition-all hover:opacity-90 disabled:opacity-50"
                   >
                     <Send className="h-4 w-4" />
