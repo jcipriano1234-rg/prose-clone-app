@@ -1,3 +1,5 @@
+import { supabase } from "@/integrations/supabase/client";
+
 const GHOST_WRITE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ghost-write`;
 
 export interface ChatMessage {
