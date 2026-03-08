@@ -10,14 +10,29 @@ export default function Auth() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
+    const routeAfterAuth = async (userId: string) => {
+      // Check if user already completed the quiz
+      const { data } = await supabase
+        .from("quiz_answers")
+        .select("id")
+        .eq("user_id", userId)
+        .limit(1);
+
+      if (data && data.length > 0) {
         navigate("/app", { replace: true });
+      } else {
+        navigate("/quiz", { replace: true });
+      }
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        routeAfterAuth(session.user.id);
       }
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) navigate("/app", { replace: true });
+      if (session) routeAfterAuth(session.user.id);
     });
 
     return () => subscription.unsubscribe();
