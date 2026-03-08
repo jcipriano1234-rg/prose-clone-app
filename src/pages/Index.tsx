@@ -31,6 +31,7 @@ const modeLabels: Record<Mode, string> = {
 };
 
 export default function Index() {
+  const navigate = useNavigate();
   const { samples, addSample, removeSample, totalWordCount, allSamplesText } = useWritingSamples();
   const {
     sessions, activeSessionId, setActiveSessionId,
