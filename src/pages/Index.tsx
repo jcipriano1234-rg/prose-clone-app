@@ -184,6 +184,7 @@ export default function Index() {
                         <p className="text-xs text-muted-foreground mb-2">Quick templates:</p>
                         <TemplateLibrary mode={mode} onSelectTemplate={setPrompt} />
                       </div>
+                    )}
                   </motion.div>
                 </div>
               ) : (
