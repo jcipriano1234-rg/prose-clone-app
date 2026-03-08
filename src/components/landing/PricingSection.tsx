@@ -55,7 +55,7 @@ export default function PricingSection() {
   const navigate = useNavigate();
 
   return (
-    <section className="py-24 px-6 surface-warm">
+    <section className="pt-16 pb-24 px-6 surface-warm">
       <div className="max-w-5xl mx-auto">
         <motion.p
           initial={{ opacity: 0 }}
