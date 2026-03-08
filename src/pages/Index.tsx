@@ -1,8 +1,9 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send, PenLine, User, Copy, Check } from "lucide-react";
+import { Send, PenLine, User, Copy, Check, Sparkles, Loader2 } from "lucide-react";
 import { AppSidebar } from "@/components/AppSidebar";
 import { streamGhostWrite, ChatMessage } from "@/lib/stream-chat";
+import { streamHumanize, type HumanizeIntensity } from "@/lib/stream-humanize";
 import { toast } from "sonner";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import ReactMarkdown from "react-markdown";
