@@ -23,11 +23,20 @@ const plans = [
     cta: "Get started free",
   },
   {
-    name: "Unlimited",
-    price: "$6.99",
+    name: "Unlimited Monthly",
+    price: "$4.99",
     period: "/mo",
     credit: "Unlimited credits",
     creditNote: "No limits",
+    extras: ["Priority speed", "Shared style library", "Admin dashboard"],
+    cta: "Go Unlimited",
+  },
+  {
+    name: "Unlimited Yearly",
+    price: "$69.99",
+    period: "/yr",
+    credit: "Unlimited credits",
+    creditNote: "Save ~$10/year",
     extras: ["Priority speed", "Shared style library", "Admin dashboard"],
     cta: "Go Unlimited",
   },
@@ -66,7 +75,7 @@ export default function PricingSection() {
           {creditCosts}
         </p>
 
-        <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        <div className="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
           {plans.map((plan, i) => (
             <motion.div
               key={plan.name}
