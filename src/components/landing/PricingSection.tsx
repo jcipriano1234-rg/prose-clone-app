@@ -32,13 +32,13 @@ const plans = [
     cta: "Start free trial",
   },
   {
-    name: "Team",
-    price: "$11.99",
+    name: "Unlimited",
+    price: "$29",
     period: "/mo",
     credit: "Unlimited credits",
     creditNote: "No limits",
     extras: ["Priority speed", "Shared style library", "Admin dashboard"],
-    cta: "Contact us",
+    cta: "Go Unlimited",
   },
 ];
 

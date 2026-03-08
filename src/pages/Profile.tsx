@@ -11,7 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 const planConfig = {
   free: { label: "Free", color: "bg-muted text-muted-foreground", icon: User },
   pro: { label: "Pro", color: "bg-primary/10 text-primary", icon: Zap },
-  team: { label: "Team", color: "bg-accent text-accent-foreground", icon: Crown },
+  team: { label: "Unlimited", color: "bg-accent text-accent-foreground", icon: Crown },
 };
 
 export default function Profile() {
