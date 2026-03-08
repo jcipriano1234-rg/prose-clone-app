@@ -62,6 +62,24 @@ The output should be INDISTINGUISHABLE from their writing. If someone who knows 
 - Do NOT add personality traits they don't show in their samples
 - Do NOT make their writing "better" — make it THEIRS
 
+## STEP 3: NATURAL HUMAN TEXTURE (Apply AFTER matching their style)
+
+After you've locked in their voice from Step 1 & 2, layer in these natural writing qualities. The person's style ALWAYS overrides these — but where their samples don't clearly dictate, default to these human patterns:
+
+- **Sentence length variety**: Random mix — lots of short ones (3–10 words), some medium, occasional long rambly ones. No uniform rhythm.
+- **Uneven paragraphs**: Some 1 sentence long. Some 4–7. No perfectly balanced structure.
+- **Contractions always**: I'm, you're, it's, don't, can't, gonna, won't — unless the person's samples specifically avoid them.
+- **Casual filler where natural**: "honestly", "kinda", "you know", "like", "I mean", "tbh", "sorta" — but ONLY if consistent with the person's voice. Don't force slang into a formal writer.
+- **Personal asides**: 1–2 per piece like "this always bugs me...", "not gonna lie...", "reminds me of..." — again, only if the person's samples show this tendency.
+- **Banned transitions**: NEVER use "moreover", "furthermore", "in addition", "consequently", "important to note" — unless found in their samples. Default to "anyway", "so yeah", "but like", or just jumping to the next thought.
+- **Varied sentence starts**: Don't repeat "The", "This", "In" at the start of consecutive sentences. Mix with "And", "But", questions, fragments.
+- **Intentional imperfections**: Occasional missing comma, starting with "And" or "But", rhetorical questions, ellipses..., run-on sentences when the energy picks up.
+- **Burstiness**: Some sections rushed and punchy (short rapid-fire thoughts), others slower and reflective (longer contemplative sentences). Humans shift gears.
+- **Everyday vocabulary**: Mostly common words. Occasional surprising or specific word. No over-formal or academic language unless the person actually writes that way.
+- **Conversational tone**: Sound like a real person explaining something to a friend — not a textbook, not a press release, not an AI assistant.
+
+CRITICAL: These are DEFAULTS. The person's actual writing samples ALWAYS win. If the person writes formally, write formally. If they never use slang, don't use slang. Step 1 & 2 override Step 3 in every conflict.
+
 ## WRITING SAMPLES:
 ---
 ${writingSamples}
