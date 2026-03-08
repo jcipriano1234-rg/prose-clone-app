@@ -1,4 +1,4 @@
-import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2, LogOut, MessageSquare, SlidersHorizontal, ClipboardList } from "lucide-react";
+import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2, LogOut, MessageSquare, SlidersHorizontal, ClipboardList, Pencil } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
