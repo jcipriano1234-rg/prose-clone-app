@@ -180,8 +180,17 @@ export default function Index() {
                     <p className="text-sm text-muted-foreground mb-4">
                       {totalWordCount > 0
                         ? `I've got ${totalWordCount} words across ${samples.length} sample${samples.length !== 1 ? "s" : ""}. Tell me what to write and I'll match your style.`
-                        : "Start by adding writing samples in the sidebar, then tell me what to write."}
+                        : "Take the writing quiz or add samples to teach me your style."}
                     </p>
+                    {totalWordCount === 0 && (
+                      <button
+                        onClick={() => navigate("/quiz")}
+                        className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium shadow-sm hover:opacity-90 transition-all mb-4"
+                      >
+                        <ClipboardList className="h-4 w-4" />
+                        Take the Writing Quiz
+                      </button>
+                    )}
                     {totalWordCount > 0 && (
                       <div className="mt-4">
                         <p className="text-xs text-muted-foreground mb-2">Quick templates:</p>
