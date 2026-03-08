@@ -1,4 +1,4 @@
-import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2, LogOut, MessageSquare, SlidersHorizontal, ClipboardList, Pencil } from "lucide-react";
+import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2, LogOut, MessageSquare, SlidersHorizontal, ClipboardList, Pencil, User } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -331,6 +331,16 @@ export function AppSidebar({
           </div>
         )}
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={() => navigate("/profile")}
+              tooltip="Profile"
+              className="gap-3 text-muted-foreground hover:text-foreground"
+            >
+              <User className="h-4 w-4" />
+              {!collapsed && <span className="text-sm">Profile</span>}
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={() => signOut()}
