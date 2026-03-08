@@ -27,7 +27,7 @@ export async function streamGhostWrite({
   prompt: string;
   history?: ChatMessage[];
   tone?: ToneSettings;
-  styleProfile?: Record<string, unknown>;
+  styleProfile?: unknown;
   onDelta: (text: string) => void;
   onDone: () => void;
   onError: (error: string) => void;
