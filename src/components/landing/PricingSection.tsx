@@ -33,7 +33,7 @@ const plans = [
   },
   {
     name: "Unlimited Yearly",
-    price: "$69.99",
+    price: "$59.99",
     period: "/yr",
     credit: "Unlimited credits",
     creditNote: "Save ~$10/year",
