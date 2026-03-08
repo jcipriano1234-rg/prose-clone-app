@@ -248,17 +248,51 @@ export default function Index() {
 function MessageBubble({
   message,
   isStreaming = false,
+  onHumanized,
 }: {
   message: ChatMessage;
   isStreaming?: boolean;
+  onHumanized?: (newContent: string) => void;
 }) {
   const isUser = message.role === "user";
   const [copied, setCopied] = useState(false);
+  const [isHumanizing, setIsHumanizing] = useState(false);
+  const [humanizedContent, setHumanizedContent] = useState<string | null>(null);
+  const [showIntensity, setShowIntensity] = useState(false);
+
+  const displayContent = humanizedContent || message.content;
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(message.content);
+    await navigator.clipboard.writeText(displayContent);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleHumanize = async (intensity: HumanizeIntensity) => {
+    setShowIntensity(false);
+    setIsHumanizing(true);
+    setHumanizedContent("");
+    let accumulated = "";
+
+    await streamHumanize({
+      text: message.content,
+      intensity,
+      onDelta: (chunk) => {
+        accumulated += chunk;
+        setHumanizedContent(accumulated);
+      },
+      onDone: () => {
+        setIsHumanizing(false);
+        setHumanizedContent(accumulated);
+        onHumanized?.(accumulated);
+        toast.success("Text humanized!");
+      },
+      onError: (err) => {
+        setIsHumanizing(false);
+        setHumanizedContent(null);
+        toast.error(err);
+      },
+    });
   };
 
   return (
@@ -283,7 +317,7 @@ function MessageBubble({
             : "bg-card border border-border shadow-sm"
         }`}
       >
-        {!isUser && !isStreaming && (
+        {!isUser && !isStreaming && !isHumanizing && (
           <button
             onClick={handleCopy}
             className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-background text-muted-foreground shadow-sm opacity-0 transition-opacity group-hover:opacity-100 hover:text-foreground"
@@ -296,12 +330,49 @@ function MessageBubble({
         ) : (
           <>
             <div className="prose prose-sm max-w-none text-foreground prose-headings:font-serif prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-li:text-foreground">
-              <ReactMarkdown>{message.content}</ReactMarkdown>
-              {isStreaming && (
+              <ReactMarkdown>{displayContent}</ReactMarkdown>
+              {(isStreaming || isHumanizing) && (
                 <span className="inline-block h-4 w-1.5 animate-pulse rounded-sm bg-primary" />
               )}
             </div>
-            {!isStreaming && <AiDetectorScore content={message.content} />}
+            {!isStreaming && !isHumanizing && (
+              <div className="flex items-center gap-2 flex-wrap">
+                <AiDetectorScore content={displayContent} />
+                <div className="relative">
+                  <button
+                    onClick={() => setShowIntensity(!showIntensity)}
+                    disabled={isHumanizing}
+                    className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full border border-primary/20 bg-primary/5 text-[11px] font-medium text-primary hover:bg-primary/10 transition-colors"
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    {humanizedContent ? "Re-humanize" : "Humanize"}
+                  </button>
+                  {showIntensity && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="absolute bottom-full left-0 mb-1 flex gap-1 rounded-lg border border-border bg-card p-1 shadow-lg z-10"
+                    >
+                      {(["light", "medium", "aggressive"] as HumanizeIntensity[]).map((level) => (
+                        <button
+                          key={level}
+                          onClick={() => handleHumanize(level)}
+                          className="px-2.5 py-1 rounded-md text-[11px] font-medium text-foreground hover:bg-muted transition-colors capitalize whitespace-nowrap"
+                        >
+                          {level}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </div>
+              </div>
+            )}
+            {isHumanizing && (
+              <div className="flex items-center gap-1.5 mt-2 text-[11px] text-muted-foreground">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                Humanizing...
+              </div>
+            )}
           </>
         )}
       </div>
