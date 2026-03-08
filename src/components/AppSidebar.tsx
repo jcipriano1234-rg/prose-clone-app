@@ -1,4 +1,4 @@
-import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2, LogOut, MessageSquare } from "lucide-react";
+import { Mail, FileText, Sparkles, PenLine, Plus, BookOpen, ChevronDown, Clock, Trash2, LogOut, MessageSquare, SlidersHorizontal } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -16,6 +16,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import type { ChatSession } from "@/hooks/useChatHistory";
+import { ToneSliders, type ToneSettings } from "@/components/ToneSliders";
 
 type Mode = "email" | "essay" | "polish" | "freeform";
 
@@ -38,6 +39,8 @@ interface AppSidebarProps {
   activeSessionId: string | null;
   onSelectSession: (id: string) => void;
   onDeleteSession: (id: string) => void;
+  toneSettings: ToneSettings;
+  onToneChange: (settings: ToneSettings) => void;
 }
 
 const modes = [
@@ -51,6 +54,7 @@ export function AppSidebar({
   mode, onModeChange, onNewSession,
   samples, onAddSample, onRemoveSample, totalWordCount,
   chatSessions, activeSessionId, onSelectSession, onDeleteSession,
+  toneSettings, onToneChange,
 }: AppSidebarProps) {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
@@ -58,6 +62,7 @@ export function AppSidebar({
   const { signOut } = useAuth();
   const [samplesOpen, setSamplesOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(true);
+  const [toneOpen, setToneOpen] = useState(false);
 
   const handleSubmitSample = () => {
     if (newSampleText.trim()) {
