@@ -301,9 +301,6 @@ function MessageBubble({
                 <span className="inline-block h-4 w-1.5 animate-pulse rounded-sm bg-primary" />
               )}
             </div>
-            {!isStreaming && (
-              <AiDetectorScore content={message.content} />
-            )}
           </>
         )}
       </div>
