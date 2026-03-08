@@ -166,6 +166,19 @@ export function WritingQuiz({ onComplete, onSkip, initialAnswers, isEditing }: W
               autoFocus
             />
 
+            {(() => {
+              const wordCount = currentAnswer.trim().split(/\s+/).filter(Boolean).length;
+              const remaining = 10 - wordCount;
+              if (remaining > 0 && currentAnswer.trim().length > 0) {
+                return (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {remaining} more word{remaining !== 1 ? "s" : ""} needed
+                  </p>
+                );
+              }
+              return null;
+            })()}
+
             <div className="flex items-center justify-between mt-4">
               <div className="flex items-center gap-2">
                 {currentStep > 0 && (
