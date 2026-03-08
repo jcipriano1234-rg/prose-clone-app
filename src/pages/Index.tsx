@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send, PenLine, User, Copy, Check, ClipboardList, Zap } from "lucide-react";
+import { Send, PenLine, User, Copy, Check, ClipboardList, Zap, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { AppSidebar } from "@/components/AppSidebar";
 import { streamGhostWrite, ChatMessage } from "@/lib/stream-chat";
@@ -176,7 +176,9 @@ export default function Index() {
         <div className="flex-1 flex flex-col min-w-0">
           <header className="h-12 flex items-center justify-between border-b border-border bg-card/50 backdrop-blur-sm px-3 sm:px-4 gap-2">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <SidebarTrigger />
+              <SidebarTrigger className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-2 py-1.5 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0">
+                <Menu className="h-4 w-4 sm:hidden" />
+              </SidebarTrigger>
               <span className="text-sm font-medium text-foreground truncate">{modeLabels[mode]}</span>
             </div>
             <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
