@@ -184,10 +184,6 @@ export default function Index() {
                         <p className="text-xs text-muted-foreground mb-2">Quick templates:</p>
                         <TemplateLibrary mode={mode} onSelectTemplate={setPrompt} />
                       </div>
-                    )}
-                        ? `I've got ${totalWordCount} words across ${samples.length} sample${samples.length !== 1 ? "s" : ""}. Tell me what to write and I'll match your style.`
-                        : "Start by adding writing samples in the sidebar, then tell me what to write."}
-                    </p>
                   </motion.div>
                 </div>
               ) : (
@@ -296,13 +292,15 @@ function MessageBubble({
         {isUser ? (
           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
         ) : (
-          <div className="prose prose-sm max-w-none text-foreground prose-headings:font-serif prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-li:text-foreground">
-            <ReactMarkdown>{message.content}</ReactMarkdown>
-            {isStreaming && (
-              <span className="inline-block h-4 w-1.5 animate-pulse rounded-sm bg-primary" />
-            )}
-          </div>
-          {!isStreaming && <AiDetectorScore content={message.content} />}
+          <>
+            <div className="prose prose-sm max-w-none text-foreground prose-headings:font-serif prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-li:text-foreground">
+              <ReactMarkdown>{message.content}</ReactMarkdown>
+              {isStreaming && (
+                <span className="inline-block h-4 w-1.5 animate-pulse rounded-sm bg-primary" />
+              )}
+            </div>
+            {!isStreaming && <AiDetectorScore content={message.content} />}
+          </>
         )}
       </div>
     </motion.div>
